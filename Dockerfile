@@ -39,6 +39,7 @@ USER app_user
 
 RUN mkdir -p /data/web-app
 COPY ./package.json /data/web-app
+WORKDIR /data/web-app
 
 # Assign permissions to app_user
 USER root
@@ -50,7 +51,6 @@ USER app_user
 RUN npm install
 
 # Copy all application files
-WORKDIR /data/web-app
 COPY ./ /data/web-app
 
 # Assign permissions to app_user
