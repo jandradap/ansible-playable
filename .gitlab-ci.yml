@@ -30,6 +30,6 @@ job1:
 #  - docker run -it -p 9522:22 -p 9500:9000 -p 3500:3000 -p 3502:3002 -p 3501:3001 --link afs-mongo:db  ansible-playable-test
 
 job1:
-  stage: build
+  stage: deploy
   script:
   - docker push mmumshad/ansible-playable
