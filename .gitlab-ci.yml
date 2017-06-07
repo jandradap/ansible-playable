@@ -13,17 +13,23 @@ before_script:
 
 stages:
   - build
-  - test
+#  - test
+  - deploy
 
 
 job1:
   stage: build
   script:
-  - docker build -t ansible-playable-test .
+  - docker build -t mmumshad/ansible-playable .
 
 
-job2:
-  stage: test
+#job2:
+#  stage: test
+#  script:
+#  - docker run  --name afs-mongo -d mongo
+#  - docker run -it -p 9522:22 -p 9500:9000 -p 3500:3000 -p 3502:3002 -p 3501:3001 --link afs-mongo:db  ansible-playable-test
+
+job1:
+  stage: build
   script:
-  - docker run  --name afs-mongo -d mongo
-  - docker run -it -p 9522:22 -p 9500:9000 -p 3500:3000 -p 3502:3002 -p 3501:3001 --link afs-mongo:db  ansible-playable-test
+  - docker push mmumshad/ansible-playable
