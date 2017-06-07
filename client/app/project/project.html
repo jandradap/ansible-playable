@@ -1,0 +1,80 @@
+<div class="container">
+  <div class="row" style="margin-top:50px;">
+    <div class="col-md-6">
+
+      <button class="btn btn-default" ng-click="showProjectForm()">Create <span class="fa fa-plus"></span></button>
+
+      <form ng-show="showCreateProject">
+        <p class="form-group">
+          <label>Project Name</label>
+          <input type="text" ng-model="newProject.name" class="form-control" ng-required="true">
+        </p>
+
+        <p class="form-group">
+          <label>Ansible Host</label>
+          <input type="text" ng-model="newProject.ansibleEngine.ansibleHost" class="form-control">
+        <div class="hint">Ansible Controller system - A linux system with Ansible Installed on it. Required if you want to execute Ansible playbooks. You could skip this and still generate playbooks but not test them.</div>
+        </p>
+
+        <p class="form-group" ng-if="newProject.ansibleEngine.ansibleHost">
+          <label>User</label>
+          <input type="text" ng-model="newProject.ansibleEngine.ansibleHostUser" class="form-control">
+        </p>
+
+        <p class="form-group" ng-if="newProject.ansibleEngine.ansibleHost">
+          <label>Host Password</label>
+          <input type="password" ng-model="newProject.ansibleEngine.ansibleHostPassword" class="form-control">
+        </p>
+
+        <p class="form-group" ng-if="newProject.ansibleEngine.ansibleHost">
+          <label>Project Folder</label>
+          <input ng-model="newProject.ansibleEngine.projectFolder" class="form-control">
+          <div ng-if="newProject.ansibleEngine.ansibleHost" class="hint">A directory path to store files of this project </div>
+        </p>
+
+        <p class="form-group" ng-if="newProject.ansibleEngine.ansibleHost">
+          <label>Custom Modules Location</label>
+          <input ng-model="newProject.ansibleEngine.customModules" class="form-control">
+          <div ng-if="newProject.ansibleEngine.ansibleHost" class="hint">A directory path to store custom modules for this project </div>
+        </p>
+
+        <button class="btn btn-success" ng-disabled="!newProject.name" ng-click="createProject()"> Save <span class="fa {{saveButtonIcon}}"></span></button>
+        <button class="btn btn-warning" ng-click="hideProjectForm()"> Cancel <span class="fa fa-times"></span></button>
+
+      </form>
+
+      <div ng-if="msg" class="alert alert-{{msg_status}}">{{msg}}</div>
+
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Ansible Host</th>
+        <th>Ansible Version</th>
+        <th>Time</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr ng-repeat="project in projects | orderBy : 'executionTime'">
+        <td>{{project.name}}</td>
+        <td>{{project.ansibleEngine.ansibleHost}}</td>
+        <td>{{project.ansibleVersion}}</td>
+        <td>{{project.creationTime | date : 'medium'}}</td>
+        <td>
+          <div class="btn-group">
+            <label class="btn btn-default" ng-click="editProject(project)" ><span class="fa fa-edit"></span></label>
+            <label class="btn btn-danger" ng-click="deleteProject(project)" confirm="Are you sure you want to delete?" ><span class="fa fa-trash"></span></label>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

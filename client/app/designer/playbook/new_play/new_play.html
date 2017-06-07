@@ -1,0 +1,96 @@
+<!-- Modal content-->
+<div class="modal-content">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">&times;</button>
+    <h4 class="modal-title">{{title}}</h4>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-md-6">
+
+          <p class="form-group">
+            <label>Name</label>
+            <input ng-model="newPlay.name" type="text" class="form-control" placeholder="Play Name">
+          </p>
+
+          <p class="form-group">
+            <label>Tags</label>
+            <input ng-model="tags" type="text" class="form-control" placeholder="Tags separated by comma">
+          </p>
+
+          <p class="form-group" ng-show="!editMode || editHostMode">
+            <label>Inventory Files</label>
+            <select class="form-control" ng-disabled="loading_msg" ng-change="inventorySelected(selectedInventoryFile);" ng-model="selectedInventoryFile" ng-options="inventoryFile as inventoryFile for inventoryFile in inventoryFiles">
+            </select>
+          </p>
+
+          <p class="form-group" ng-show="!editMode || editHostMode">
+            <label>Hosts</label>
+            <select class="form-control" ng-disabled="loading_msg" ng-model="newPlay.hosts" ng-options="host.name as host.name for host in hosts">
+            </select>
+          </p>
+
+          <p class="form-group" ng-show="editMode && !editHostMode">
+            <label>Hosts </label>
+            <input ng-model="newPlay.hosts" ng-disabled="true" type="text" class="form-control" placeholder="Host Name">
+          </p>
+          <div class="input-group-btn" ng-show="editMode && !editHostMode">
+            <button class="btn btn-default" ng-click="editHostMode = true"> <span class="fa fa-edit"></span> Edit Hosts </button>
+          </div>
+
+          <label>Roles</label>
+          <tags-input ng-model="newPlay_roles" add-from-autocomplete-only="true" placeholder="Add roles to play">
+            <auto-complete source="loadTags($query)" min-length="0" load-on-empty="true"  load-on-focus="true" load-on-down-arrow="true" ></auto-complete>
+          </tags-input>
+
+      </div>
+      <div class="col-md-6">
+
+        <h4 ng-if="selectedHostInfo.ip">IP - {{selectedHostInfo.ip}}</h4>
+
+        <h4 ng-if="selectedHostInfo.members">Members:</h4>
+        <ul class="list-group" ng-if="selectedHostInfo.members">
+          <li class="list-group-item" ng-repeat="member in selectedHostInfo.members.split(',')">{{member}}</li>
+        </ul>
+
+        <div ng-if="hostGroups">
+          <h4 >Member Of:</h4>
+          <ul class="list-group">
+            <li class="list-group-item" ng-repeat="group in hostGroups">{{group.name}}</li>
+          </ul>
+        </div>
+
+        <!--<div ui-ace="{theme:'twilight',document:'INI',mode:'ini',showGutter:false}" ng-model="hostInfo">
+
+        </div>-->
+      </div>
+    </div>
+    <div class="row" ng-if="selectedHostInfo">
+      <h4>Variables</h4>
+      <div class="input-group">
+        <span class="input-group-addon" >Groups</span>
+        <select class="form-control" ng-change="variableGroupSelected(selectedVariableGroup.value)" ng-model="selectedVariableGroup.value" ng-options="group.name as group.name for group in [selectedHostInfo].concat(hostGroups)">
+        </select>
+      </div>
+      <div ui-ace="{theme:'twilight',document:'INI',mode:'ini'}" ng-model="variableInfo">
+
+      </div>
+    </div>
+  </div>
+  <div class="alert alert-danger" ng-if="err_msg">{{err_msg}}</div>
+  <div class="modal-footer">
+
+
+    <div class="row">
+      <div class="col-md-3" style="text-align: left">
+          <span ng-show="loading_msg" class="fa fa-spin fa-spinner"></span> {{loading_msg}}
+      </div>
+      <div class="col-md-9" style="text-align: right">
+        <button class="btn btn-primary" ng-click="createPlay()">Save <span ng-if="createPlayLoading" class="fa fa-spinner fa-spin"></span> </button>
+        <button class="btn btn-default" type="button" ng-click="cancel()">Close</button>
+      </div>
+    </div>
+
+
+  </div>
+</div>

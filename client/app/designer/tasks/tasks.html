@@ -1,0 +1,53 @@
+<div class="table-responsive">
+  <table class="table">
+    <thead>
+    <tr>
+      <th>Select</th>
+      <th>Name</th>
+      <th>Module</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="task in tasksList">
+      <td><input type="checkbox" ng-model="tasksMetaData[$index].selected">
+      </td>
+      <td>{{tasksMetaData[$index].taskName}}</td>
+      <td>{{tasksMetaData[$index].taskModule}}</td>
+      <td>
+        <div class="btn-group">
+          <label class="btn btn-default btn-sm" ng-click="showTaskModal($index)"><span
+            class="fa fa-edit"></span></label>
+          <!--<label class="btn btn-default btn-sm" ng-click="showTaskModal($index,true)"><span
+            class="fa fa-copy"></span></label>-->
+          <!--<label class="btn btn-danger btn-sm" ng-click="deleteTask($index)"
+                 confirm="Are you sure you want to delete?"><span class="fa fa-trash"></span></label>-->
+          <!--<div style="display: inline-block" tooltip-enable="!task.tags"
+               uib-tooltip="Tag must be assigned to play individually"><label class="btn btn-success btn-sm"
+                                                                              ng-disabled="!task.tags"
+                                                                              ng-click="executeAnsiblePlayBook(task.tags,'Task',task.name, selectedPlay)"><span
+            class="fa fa-play"></span></label></div>-->
+          <label class="btn btn-primary btn-sm" ng-disabled="$first"
+                 ng-click="moveUp(tasksList,$index,'saveTaskListLoading')"><span
+            class="fa fa-arrow-up"></span></label>
+          <label class="btn btn-primary btn-sm" ng-disabled="$last"
+                 ng-click="moveDown(tasksList,$index,'saveTaskListLoading')"><span
+            class="fa fa-arrow-down"></span></label>
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<button class="btn btn-default" data-toggle="modal" data-target="#createTaskModal" ng-click="showTaskModal()">
+  Create Task <span class="fa fa-plus"></span></button>
+<button class="btn btn-success" data-toggle="modal" ng-disabled="!selectedTasksPlayButton" ng-if="!buttonStates.save"
+        ng-click="executeSelectedTasks()"> Play <span class="fa fa-play"></span></button>
+<button class="btn btn-danger" data-toggle="modal" ng-disabled="!selectedTasksDeleteButton" ng-if="!buttonStates.save" confirm="Are you sure you want to delete the selected tasks?"
+        ng-click="deleteTasks()"> Delete <span class="fa fa-trash-o"></span></button>
+<button class="btn btn-primary" ng-if="buttonStates.save"
+        ng-click="savePlaybook(buttonStates)">Save <span ng-if="buttonStates.loading"
+                                                         class="fa fa-spinner fa-spin"></span></button>
+<button class="btn btn-warning" ng-if="buttonStates.save"
+        ng-click="cancelChange(buttonStates)">Cancel <span class="fa fa-times"></span></button>

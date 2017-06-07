@@ -1,0 +1,5 @@
+.hint {
+  /* Copy styles from ng-messages */
+  font-size: 12px;
+  /* Set our own color */
+  color: grey; }

@@ -1,0 +1,46 @@
+<!-- Modal content-->
+<div class="modal-content">
+  <div class="modal-header">
+    <h4 class="modal-title">New Host</h4>
+  </div>
+  <div class="modal-body">
+
+    <p class="form-group">
+      <label>Host Name</label>
+      <input type="text" ng-model="newHost.name" class="form-control">
+    </p>
+
+    <p class="form-group">
+      <label>Member of Groups</label>
+      <input type="text" ng-model="newHost.members" class="form-control" placeholder="Hosts list separated by coma">
+    </p>
+
+    <label> Host Variables </label>
+    <div class="row">
+      <div class="col-md-6">
+        <complex-var members="complexVar" path="'Parent'" type="'object'" input-width="'400px'">
+
+        </complex-var>
+      </div>
+
+      <div class="col-md-6">
+        <input name="typeRadioHost" type="radio" ng-model="variableViewType.type" ng-value="'JSON'"> JSON
+        <input name="typeRadioHost" type="radio" ng-model="variableViewType.type" ng-value="'YAML'"> YAML
+        <div ng-readonly="true" ui-ace="{th1eme:'twilight',document:'yaml',mode:'yaml',onChange:codeChanged}" ng-show="variableViewType.type == 'YAML'" ng-model="complexVarStringYaml" style="max-height: 200px;">
+
+        </div>
+        <div ng-readonly="true" ui-ace="{th1eme:'twilight',document:'json',mode:'json',onChange:codeChanged,onLoad:aceLoaded}" ng-show="variableViewType.type == 'JSON'"  ng-model="complexVarString" style="max-height: 200px;">
+
+        </div>
+      </div>
+
+    </div>
+
+
+  </div>
+  <div class="alert alert-danger" ng-if="err_msg">{{err_msg}}</div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" ng-disabled="!newHost.name" ng-click="createHost()">Create <span ng-if="createHostLoading" class="fa fa-spinner fa-spin"></span></button>
+    <button class="btn btn-default" type="button" ng-click="cancel()">Close</button>
+  </div>
+</div>

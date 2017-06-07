@@ -1,0 +1,33 @@
+
+<div class="row">
+  <h3>File Browser</h3>
+  <div class="col-md-6">
+    <treecontrol ng-show="projectFiles.children" class="tree-classic"
+                 tree-model="projectFiles.children"
+                 options="treeOptions"
+                 on-selection="showSelected(node, $parentNode)"
+                 selected-node="selectedFile"
+                 filter-expression="{name: '!.git'}">
+      {{node.name}}
+    </treecontrol>
+  </div>
+
+  <div class="col-md-6">
+    <button class="btn btn-default" ng-show="selectedFile.docType == 'markdown' && !selectedFile.showSource" ng-click="selectedFile.showSource = true">
+      Show Source
+    </button>
+    <button class="btn btn-default" ng-show="selectedFile.docType == 'markdown' && selectedFile.showSource" ng-click="selectedFile.showSource = false">
+      Hide Source
+    </button>
+    <!--{{docType}}-->
+    <!--{{selectedFile.showSource}}-->
+    <div ng-show="selectedFile.showSource" ng-readonly="!editContent"
+         ui-ace="{theme:'twilight',document:selectedFile.docType,mode:selectedFile.docType,onChange:codeChanged,onLoad:aceLoaded}" ng-model="selectedFile.content">
+
+    </div>
+
+    <div ng-show="!selectedFile.showSource" btf-markdown="selectedFile.markdownContent">
+    </div>
+  </div>
+
+</div>

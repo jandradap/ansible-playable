@@ -1,0 +1,134 @@
+<!--<script type="text/ng-template" id="createTaskContent.html">-->
+<!-- Modal content-->
+<div class="modal-content" >
+  <div class="modal-header">
+    <button type="button" class="close" ng-click="cancel()" data-dismiss="modal">&times;</button>
+    <h4 class="modal-title">{{title}}</h4>
+  </div>
+  <div class="modal-body" id="TaskCreationModal">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="input-group">
+          <span class="input-group-addon" >Name</span>
+          <input ng-model="newTask.name" type="text" class="form-control" placeholder="Task Name">
+        </div>
+
+        <div class="input-group">
+          <span class="input-group-addon" >Include</span>
+          <input type="text" ng-model="newTask.include" uib-typeahead="file.name as file.name for file in files | filter: $viewValue"  class="form-control">
+        </div>
+
+        <div class="input-group">
+          <span class="input-group-addon" >Module</span>
+          <input type="text" ng-disabled="!modules || newTask.include" ng-model="newTask.module" typeahead-on-select="getModuleDescription(newTask.module)" uib-typeahead="module as module.name for module in modules | filter: $viewValue"  class="form-control">
+        </div>
+
+        <i ng-if="modulesLoading" class="fa fa-spinner fa-spin"></i>
+
+        <div class="input-group">
+          <span class="input-group-addon" >Tags</span>
+          <input ng-model="newTask.tags" type="text" class="form-control" placeholder="Tags separated by comma">
+        </div>
+
+        <div class="input-group">
+          <span class="input-group-addon" >Async (s)</span>
+          <input ng-model="newTask.async" type="text" class="form-control" placeholder="Max run time in seconds">
+        </div>
+
+        <div ng-if="newTask.async">
+          <div class="hint">{{newTask.async / 60 | number}} minutes</div>
+          <div class="input-group" >
+            <span class="input-group-addon" >Poll (s)</span>
+            <input ng-model="newTask.poll" type="text" class="form-control" placeholder="10" ng-value="10">
+          </div>
+        </div>
+
+        <div class="input-group">
+          <span class="input-group-addon" >Register Result</span>
+          <input ng-model="newTask.register" type="text" class="form-control" placeholder="Variable Name">
+        </div>
+        <div class="hint">Register results of to a variable</div>
+
+        <label class="checkbox-inline"><input type="checkbox" ng-model="newTask.module.singleLine">Single Line</label>
+        <span ng-if="getModuleDescriptionLoading" class="fa fa-spinner fa-spin"></span>
+
+        <div ng-if="newTask.module.variables">
+          <h4>Arguments</h4>
+          <div ng-repeat="variable in newTask.module.variables | orderBy : '-mandatory'">
+            <!--<div class="input-group" ng-show="!variable.isVariable && !variable.choices.length">
+              <span class="input-group-addon" >{{ variable.mandatory ? "*" : "" }} {{variable.name}}</span>
+              <input ng-model="variable.value" type="text" class="form-control" required="{{variable.mandatory}}">
+            </div>-->
+
+            <!--Input Type - Default Typeahead - variable or string-->
+            <div class="input-group" ng-show="!variable.choices.length">
+              <span class="input-group-addon" uib-tooltip="{{variable.description}}">{{ variable.mandatory ? "*" : "" }} {{variable.name}}</span>
+              <!--<select class="form-control" ng-model="variable.value" ng-options="('&quot;\{\{' + var.name + '\}\}&quot;') as (var.name + '-' + var.value) disable when var.disabled for var in hostvars">
+              </select>-->
+
+              <input type="text" ng-model="variable.value" uib-typeahead="('\{\{' + var.key + '\}\}') as (var.key + ' = ' + var.value) for var in hostvars | filter: $viewValue"  class="form-control" placeholder="{{variable.description}}">
+
+              <span class="input-group-btn">
+                <button class="btn btn-secondary" ng-click="showComplexVariable(variable)" uib-tooltip="Click to configure Complex Variable">{ }</button>
+              </span>
+
+
+            </div>
+
+            <!--Input Type - Choice-->
+            <div class="input-group" ng-show="variable.choices.length">
+              <span class="input-group-addon" uib-tooltip="{{variable.description}}">{{ variable.mandatory ? "*" : "" }} {{variable.name}}</span>
+              <select class="form-control" ng-model="variable.value" ng-options="choice for choice in variable.choices">
+              </select>
+
+            </div>
+
+
+            <!--<div class="input-group" ng-show="variable.isComplexVariable">
+              <span class="input-group-addon" >{{ variable.mandatory ? "*" : "" }} {{variable.name}}</span>
+              &lt;!&ndash;<json-tree json="variable.complexValue"></json-tree>&ndash;&gt;
+              <button class="btn btn-default" ng-click="showComplexVariable(variable)">Configure</button>
+            </div>-->
+
+            <!--<label class="checkbox-inline"><input type="checkbox" ng-model="variable.isVariable">Variable</label>-->
+            <label class="checkbox-inline" ng-show="variable.isVariable"><input type="checkbox" ng-model="variable.isComplexVariable">Complex Variable</label>
+
+          </div>
+
+        </div>
+
+      </div>
+      <div class="col-md-6">
+        <div ng-if="showHelp">
+          <h4>Help</h4>
+          <textarea rows="20" cols="60" ng-model="detailHelp" style="font-size: 13px"></textarea>
+
+          <h4>Examples</h4>
+          <textarea rows="20" cols="60" ng-model="examples" style="font-size: 13px"></textarea>
+
+        </div>
+        <!--{{newTask.module.variables}}-->
+
+      </div>
+    </div>
+
+  </div>
+  <div class="alert alert-danger" ng-if="err_msg">{{err_msg}}</div>
+  <div class="modal-footer">
+
+    <div class="row">
+      <div class="col-md-3" style="text-align: left">
+        <button class="btn btn-default" type="button" ng-click="reloadModuleDetails(newTask.module)">Reload Module <span class="fa fa-refresh"></span></button>
+      </div>
+      <div class="col-md-9" style="text-align: right">
+        <button class="btn btn-primary" ng-click="createTask()">Save <span ng-if="createTaskLoading" class="fa fa-spinner fa-spin"></span></button>
+        <button class="btn btn-default" type="button" ng-click="cancel()">Close</button>
+      </div>
+    </div>
+
+
+  </div>
+</div>
+<!--
+</script>
+-->

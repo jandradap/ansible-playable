@@ -1,0 +1,45 @@
+<!-- Modal content-->
+<div class="modal-content">
+  <div class="modal-header">
+    <h4 class="modal-title">New Group</h4>
+  </div>
+  <div class="modal-body">
+
+    <p class="form-group">
+      <label>Group Name</label>
+      <input type="text" ng-model="newGroup.name" class="form-control">
+    </p>
+
+    <p class="form-group">
+      <label>Group Members</label>
+      <input type="text" ng-model="newGroup.members" class="form-control" placeholder="Hosts list separated by coma">
+    </p>
+
+    <label> Group Variables </label>
+    <div class="row">
+      <div class="col-md-6">
+        <complex-var members="complexVar" path="'Parent'" type="'object'" input-width="'400px'">
+
+        </complex-var>
+      </div>
+
+      <div class="col-md-6">
+        <input name="typeRadioGroup" type="radio" ng-model="variableViewType.type" ng-value="'JSON'"> JSON
+        <input name="typeRadioGroup" type="radio" ng-model="variableViewType.type" ng-value="'YAML'"> YAML
+        <div ng-readonly="true" ui-ace="{th1eme:'twilight',document:'yaml',mode:'yaml',onChange:codeChanged,onLoad:aceLoaded}" ng-show="variableViewType.type == 'YAML'" ng-model="complexVarStringYaml" style="max-height: 200px;">
+
+        </div>
+        <div ng-readonly="true" ui-ace="{th1eme:'twilight',document:'json',mode:'json',onChange:codeChanged,onLoad:aceLoaded}" ng-show="variableViewType.type == 'JSON'"  ng-model="complexVarString" style="max-height: 200px;">
+        </div>
+      </div>
+
+    </div>
+
+
+  </div>
+  <div class="alert alert-danger" ng-if="err_msg">{{err_msg}}</div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" ng-disabled="!newGroup.name" ng-click="createGroup()">Create <span ng-if="createGroupLoading" class="fa fa-spinner fa-spin"></span></button>
+    <button class="btn btn-default" type="button" ng-click="cancel()">Close</button>
+  </div>
+</div>

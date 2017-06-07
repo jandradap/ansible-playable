@@ -1,0 +1,70 @@
+<!-- Modal content-->
+<div class="modal-content">
+  <div class="modal-header">
+    <h4 class="modal-title">Search Role</h4>
+  </div>
+  <div class="modal-body">
+
+    <p class="form-group">
+      <label>Search</label>
+      <input type="text" ng-model="searchText" class="form-control">
+    </p>
+
+    <div class="row">
+      <div ng-repeat="role in searchResult">
+        <div class="clearfix" ng-if="($index % 3) == 0"></div>
+        <div class="col-md-4" >
+
+          <div class="panel">
+            <div class="panel panel-default">
+              <!--<div class="panel-heading"></div>-->
+              <div class="panel-body">
+                <span class="fa fa-spin fa-spinner fa-4x" ng-show="searchLoading"></span>
+                <h4>
+                  <span class="fa fa-github fa-2x" ng-if="role.type == 'gitrepo'"></span>
+                  <img src="assets/images/ansible_icon.png" ng-if="role.type == 'galaxy'">
+                  {{role.name}}
+                </h4>
+                {{role.description}}
+                <br>
+                <button class="btn btn-success btn-sm" ng-click="importRole(role)"> <span class="fa fa-cloud-download"></span> Import</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+
+    </div>
+
+    <!--<div class="table-responsive">
+      <table class="table">
+        <thead>
+        <tr>
+          <th>Select</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Type</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="role in searchResult">
+          <td><input name="roleGroup" type="radio" ng-model="selectedRole.role" ng-value="role">
+          </td>
+          <td>{{role.name}}</td>
+          <td>{{role.description}}</td>
+          <td>{{role.type}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    {{selectedRole}}-->
+  </div>
+  <div class="alert alert-danger" ng-if="err_msg">{{err_msg}}</div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" ng-disabled="!searchText" ng-click="searchRoles()">Search <span ng-if="!searchLoading" class="fa fa-search"></span> <span ng-if="searchLoading" class="fa fa-spinner fa-spin"></span></button>
+    <!--<button class="btn btn-primary" ng-disabled="!selectedRole.role.name" ng-click="importRole()">Import <span ng-if="importLoading" class="fa fa-spinner fa-spin"></span></button>-->
+    <button class="btn btn-default" type="button" ng-click="cancel()">Close</button>
+  </div>
+</div>

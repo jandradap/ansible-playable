@@ -1,0 +1,38 @@
+<div>
+  <div class="row">
+    <div class="col-md-5" style="text-align: center" ng-if="type != 'array'">
+      <h5>Key</h5>
+    </div>
+    <div class="col-md-5" style="text-align: center">
+      <h5>Value</h5>
+    </div>
+  </div>
+
+  <div ng-repeat="member in membersCopy">
+
+    <div class="row">
+      <div class="col-md-5" style="padding:2px;" ng-if="type != 'array'">
+        <input type="text" ng-model="member.key" class="form-control complex-var-input" tabindex="{{tabgroup + ($index * 10) + 1}}" >
+      </div>
+      <div class="col-md-5" style="padding:2px;">
+        <!--<input type="text" ng-model="member.value">-->
+        <input type="text" ng-model="member.value" uib-typeahead="('\{\{' + var.key + '\}\}') as (var.key + ' = ' + var.value) for var in hostVars | filter: $viewValue"  class="form-control complex-var-input" tabindex="{{tabgroup +  ($index * 10) + 2}}">
+      </div>
+      <div class="col-md-2" style="padding:2px;">
+        <div class="btn-group" style="top: -7px;">
+          <label ng-click="membersCopy.splice($index+1,0,{})" style="cursor: pointer;font-weight: bold;font-size: 20px; color:green" tabindex="{{tabgroup + ($index * 10) + 3}}" ng-keydown="($event.which === 13 || $event.which === 32) && membersCopy.splice($index+1,0,{})" >+</label>
+          <label ng-click="membersCopy.splice($index,1)" style="cursor: pointer;font-weight: bold;font-size: 25px; color:red" tabindex="{{tabgroup + ($index * 10) + 4}}">-</label>
+          <label ng-click="setMemberType(member,'object')" style="cursor: pointer;font-weight: bold;font-size: 12px;" tabindex="{{tabgroup + ($index * 10) + 5}}">{ }</label>
+          <label ng-click="setMemberType(member,'array')" style="cursor: pointer;font-weight: bold;font-size: 12px;" tabindex="{{tabgroup + ($index * 10) + 6}}">[ ]</label>
+        </div>
+      </div>
+    </div>
+    <div style="margin-left:30px;">
+      <complex-var ng-if="member.type == 'object' || member.type == 'array'" host-vars="hostVars" tabgroup="tabgroup + 100" type="member.type" members="member.value" path="member.key">
+      </complex-var>
+    </div>
+
+    <!--<input type="text" ng-model="member.value" uib-typeahead="('&quot;\{\{' + var.name + '\}\}&quot;') as (var.name + ' = ' + var.value) for var in hostvars | filter: $viewValue"  class="form-control">-->
+  </div>
+</div>
+

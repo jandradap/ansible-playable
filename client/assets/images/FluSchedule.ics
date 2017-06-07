@@ -1,0 +1,22 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+METHOD:REQUEST
+PRODID:-//ddaysoftware.com//NONSGML DDay.iCal 1.0//EN
+BEGIN:VEVENT
+DESCRIPTION:You have signed up to receive one or more services on Thursday\
+ , August 25 2016 at 11:00 AM\n\nWellness Screenings
+DTEND:20160825T110000
+DTSTAMP:20160812T142534
+DTSTART:20160825T110000
+LOCATION:New York City\, NY - 2 Penn Plaza\, 17th & 18th Floor
+ORGANIZER;CN=Passport Health:mailto:clinics@passporthealthusa.com
+SEQUENCE:0
+SUMMARY:Passport Health Reminder
+UID:1b13ebdf-8ea1-4207-82f4-4f8bec20de7b
+BEGIN:VALARM
+ACTION:Display
+DESCRIPTION:Passport Health Reminder
+TRIGGER:PT30M
+END:VALARM
+END:VEVENT
+END:VCALENDAR

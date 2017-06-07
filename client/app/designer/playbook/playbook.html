@@ -1,0 +1,166 @@
+<div class="col-md-6">
+  <uib-accordion close-others="false">
+    <div uib-accordion-group class="panel-default" is-open="isopen.playbooks">
+      <uib-accordion-heading>
+        Playbooks <i class="pull-right glyphicon"
+                     ng-class="{'glyphicon-chevron-down': isopen.playbooks, 'glyphicon-chevron-right': !isopen.playbooks}"></i>
+      </uib-accordion-heading>
+
+      <button class="btn btn-default" ng-click="showCreatePlaybookModal()">Create Playbook <span
+        class="fa fa-plus"></span></button>
+      <button class="btn btn-default" ng-if="!editPlaybook.value" ng-click="editPlaybookMethod()">Edit <span
+        ng-if="!showSaveButton.savePlaybookLoading" class="fa fa-edit"></span></button>
+      <button class="btn btn-primary" ng-if="editPlaybook.value" ng-disabled="!selectedPlaybook.playbook"
+              ng-click="savePlaybook('savePlaybookLoading')">Save <span ng-if="!showSaveButton.savePlaybookLoading"
+                                                                        class="fa fa-save"></span><span
+        ng-if="showSaveButton.savePlaybookLoading" class="fa fa-spinner fa-spin"></span></button>
+      <button class="btn btn-warning" ng-if="editPlaybook.value" confirm="Are you sure you want to discard the changes?"
+              ng-click="cancelPlaybookChanges()">Cancel <span class="fa fa-times-circle"></span></button>
+      <button class="btn btn-danger" confirm="Are you sure you want to delete playbook? "
+              ng-disabled="!selectedPlaybook.playbook" ng-click="deletePlaybook()">Delete <span
+        ng-show="!deletePlaybookLoading" class="fa fa-save"></span><span ng-show="deletePlaybookLoading"
+                                                                         class="fa fa-spinner fa-spin"></span></button>
+      <button class="btn btn-success" ng-disabled="!selectedPlaybook.playbook"
+              ng-click="executeAnsiblePlayBook(null,'Playbook')">Play <span class="fa fa-play"></span></button>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+          <tr>
+            <th>Select</th>
+            <th>Name</th>
+            <!--<th>Actions</th>-->
+          </tr>
+          </thead>
+          <tbody>
+          <tr ng-repeat="playbook in playbooks">
+            <td><input name="playbookGroup" type="radio" ng-model="selectedPlaybook.playbook" ng-value="playbook">
+            </td>
+            <td>{{playbook}}</td>
+            <!--<td><div class="btn-group">
+              <label class="btn btn-default btn-sm" ng-click="showCreatePlayModal($index)" ><span class="fa fa-edit"></span></label>
+              <label class="btn btn-danger btn-sm" confirm="Are you sure you want to delete?"  ng-click="deletePlay($index)" ><span class="fa fa-trash-o"></span></label>
+              <div style="display: inline-block" tooltip-enable="!play.tags" uib-tooltip="Tag must be assigned to play individually"><label class="btn btn-success btn-sm" ng-disabled="!play.tags"  ng-click="executeAnsiblePlayBook(play.tags,'Play',play.name,play)" ><span class="fa fa-play"></span></label></div>
+            </div></td>-->
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div uib-accordion-group class="panel-default" is-open="isopen.plays" ng-show="plays">
+      <uib-accordion-heading>
+        Plays <i class="pull-right glyphicon"
+                 ng-class="{'glyphicon-chevron-down': isopen.plays, 'glyphicon-chevron-right': !isopen.plays}"></i>
+      </uib-accordion-heading>
+
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+          <tr>
+          <tr>
+            <th>Select</th>
+            <th>Name</th>
+            <!--<th>Tags</th>-->
+            <th>Hosts</th>
+            <th>Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr ng-repeat="play in plays">
+            <td><input name="playGroup" type="radio" ng-model="selectedPlay.play" ng-value="play">
+            </td>
+            <td>{{play.name}}</td>
+            <!--<td>{{play.tags.join(', ')}}</td>-->
+            <td>{{play.hosts}}</td>
+            <td>
+              <div class="btn-group">
+                <label class="btn btn-default btn-sm" ng-click="showCreatePlayModal($index)"><span
+                  class="fa fa-edit"></span></label>
+                <label class="btn btn-danger btn-sm" confirm="Are you sure you want to delete?"
+                       ng-click="deletePlay($index)"><span class="fa fa-trash-o"></span></label>
+                <div style="display: inline-block" tooltip-enable="!play.tags"
+                     uib-tooltip="Tag must be assigned to play individually"><label class="btn btn-success btn-sm"
+                                                                                    ng-disabled="!play.tags"
+                                                                                    ng-click="executeAnsiblePlayBook(play.tags,'Play',play.name,play)"><span
+                  class="fa fa-play"></span></label></div>
+                <label class="btn btn-primary btn-sm" ng-disabled="$first"
+                       ng-click="moveUp(plays,$index,'savePlayLoading')"><span class="fa fa-arrow-up"></span></label>
+                <label class="btn btn-primary btn-sm" ng-disabled="$last"
+                       ng-click="moveDown(plays,$index,'savePlayLoading')"><span
+                  class="fa fa-arrow-down"></span></label>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <button class="btn btn-default" ng-click="showCreatePlayModal()">Create <span class="fa fa-plus"></span></button>
+      <button class="btn btn-primary" ng-if="showSaveButton.savePlayLoading" ng-click="savePlaybook('savePlayLoading')">
+        Save <span ng-if="loadingButtons.savePlayLoading" class="fa fa-spinner fa-spin"></span></button>
+      <button class="btn btn-warning" ng-if="showSaveButton.savePlayLoading" ng-click="cancelChange('savePlayLoading')">
+        Cancel <span class="fa fa-times"></span></button>
+    </div>
+
+    <div uib-accordion-group class="panel-default" is-open="isopen.tasks" ng-show="selectedPlay.play">
+      <uib-accordion-heading>
+        Tasks <i class="pull-right glyphicon"
+                 ng-class="{'glyphicon-chevron-down': isopen.tasks, 'glyphicon-chevron-right': !isopen.tasks}"></i>
+      </uib-accordion-heading>
+
+      <tasks tasks-list="selectedPlay.play.tasks" update-playbook-file-content="updatePlaybookFileContent" selected-play="selectedPlay" save-playbook="savePlaybook" execute-ansible-play-book="executeAnsiblePlayBook"></tasks>
+    </div>
+
+    <div uib-accordion-group class="panel-default" is-open="isopen.roles" ng-show="selectedPlay.play.roles">
+      <uib-accordion-heading>
+        Roles <i class="pull-right glyphicon"
+                 ng-class="{'glyphicon-chevron-down': isopen.tasks, 'glyphicon-chevron-right': !isopen.tasks}"></i>
+      </uib-accordion-heading>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+          <tr>
+            <th>Select</th>
+            <th>Name</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr ng-repeat="role in selectedPlay.play.roles">
+            <td><input name="playGroup" type="radio" ng-model="selectedRole.role" ng-value="role">
+            </td>
+            <td>{{role}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <div class="panel panel-default">
+          <div class="panel-heading">File Browser</div>
+          <div class="panel-body">
+
+            <treecontrol ng-if="roleData.children" class="tree-classic"
+                         tree-model="roleData.children"
+                         options="treeOptions"
+                         on-selection="showSelected(node)"
+                         selected-node="node1"
+                         filter-expression="{name: '!.git'}">
+              {{node.name}}
+            </treecontrol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </uib-accordion>
+
+</div>
+
+<div class="col-md-6">
+  <div ng-readonly="!editPlaybook.value" ui-ace="{theme:'twilight',document:'YAML',mode:'yaml',onChange:codeChanged,onLoad:aceLoaded}"
+       ng-model="selectedPlaybook.content">
+
+  </div>
+
+</div>

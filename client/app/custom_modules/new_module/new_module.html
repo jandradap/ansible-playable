@@ -1,0 +1,144 @@
+<div class="row" ng-controller="NewModuleController">
+
+    <div class="panel">
+      <div class="panel panel-primary">
+        <div class="panel-heading">New Module</div>
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-md-4">
+              <p class="form-group">
+                <label>Module Name</label>
+                <input type="text" ng-model="newModule.module" class="form-control" ng-required="true" placeholder="modulename">
+              </p>
+            </div>
+            <div class="col-md-2">
+              <p class="form-group">
+                <label>Version Added</label>
+                <input type="text" ng-model="newModule.version_added" class="form-control" ng-required="true" placeholder="X.Y">
+              </p>
+            </div>
+            <div class="col-md-2">
+              <p class="form-group">
+                <label>Check Mode</label>
+                <label class="checkbox-inline"><input ng-model="newModule.supports_check_mode" type="checkbox"></label>
+              </p>
+            </div>
+            <div class="col-md-4">
+              <p class="form-group">
+                <label>Author</label>
+                <input type="text" ng-model="newModule.author" class="form-control" ng-required="true" placeholder="Your AWESOME name, @awesome-github-id">
+              </p>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-4">
+              <p class="form-group">
+                <label>Short Description</label>
+                <input type="text" ng-model="newModule.short_description" class="form-control" ng-required="true" placeholder="This is a sentence describing the module">
+              </p>
+            </div>
+            <div class="col-md-8">
+              <p class="form-group">
+                <label>Description</label>
+                <input type="text" ng-model="newModule.description" class="form-control" ng-required="true" placeholder="Longer description of the module; You might include instructions">
+              </p>
+            </div>
+          </div>
+
+
+          <p class="form-group">
+            <label>Notes</label>
+            <input type="text" ng-model="newModule.notes" class="form-control" ng-required="true" placeholder="Other things consumers of your module should know">
+          </p>
+
+          <p class="form-group">
+            <label>Requirements</label>
+            <input type="text" ng-model="newModule.requirements" class="form-control" ng-required="true" placeholder="List of required things separated by semicolon; like the factor package; or a specific platform">
+          </p>
+
+          <div class="panel">
+            <div class="panel panel-default">
+              <div class="panel-heading">Options</div>
+              <div class="panel-body">
+                <div class="row">
+                  <div class="col-md-2" style="text-align: center">
+                    <label>Name</label>
+                  </div>
+                  <div class="col-md-2" style="text-align: center">
+                    <label>Description</label>
+                  </div>
+                  <div class="col-md-1" style="text-align: center">
+                    <label>Type</label>
+                  </div>
+                  <div class="col-md-1" style="text-align: center">
+                    <label>Required</label>
+                  </div>
+                  <div class="col-md-1" style="text-align: center">
+                    <label>Default</label>
+                  </div>
+                  <div class="col-md-2" style="text-align: center">
+                    <label>Aliases</label>
+                  </div>
+                  <div class="col-md-2" style="text-align: center">
+                    <label>Choices</label>
+                  </div>
+                  <div class="col-md-1" style="text-align: center">
+                    <label>Actions</label>
+                  </div>
+                </div>
+
+                <div ng-repeat="option in newModule.options">
+
+                  <div class="row">
+                    <div class="col-md-2" style="padding:2px;">
+                      <input type="text" ng-model="option.name" class="form-control">
+                    </div>
+                    <div class="col-md-2" style="padding:2px;">
+                      <!--<input type="text" ng-model="member.value">-->
+                      <input type="text" ng-model="option.description" class="form-control">
+                    </div>
+
+                    <div class="col-md-1" style="padding:2px;">
+                      <select class="form-control" ng-model="option.type" ng-options="optionType for optionType in optionTypes">
+                      </select>
+                    </div>
+
+                    <div class="col-md-1" style="padding:2px;text-align: center">
+                      <label class="checkbox-inline"><input ng-model="option.required" type="checkbox" value=""></label>
+                    </div>
+                    <div class="col-md-1" style="padding:2px;">
+                      <input type="text" ng-disabled="option.required" ng-model="option.default" class="form-control">
+                    </div>
+                    <div class="col-md-2" style="padding:2px;">
+                      <input type="text" ng-model="option.aliases" class="form-control">
+                    </div>
+                    <div class="col-md-2" style="padding:2px;">
+                      <input type="text" ng-model="option.choices" class="form-control">
+                    </div>
+                    <div class="col-md-1" style="padding:2px;text-align: center;">
+                      <div class="btn-group">
+                        <label class="btn btn-default" uib-tooltip="Insert new row after" ng-click="newModule.options.splice($index+1,0,{})" style="padding-top: 3px;padding-bottom: 3px;padding-left:5px;padding-right:5px;"><span class="fa fa-plus"></span></label>
+                        <label class="btn btn-danger" uib-tooltip="Delete row" ng-click="newModule.options.splice($index,1)" style="padding-top: 3px;padding-bottom: 3px; padding-left:5px; padding-right:5px;"><span class="fa fa-minus"></span></label>
+                      </div>
+                    </div>
+                  </div>
+                  <!--<input type="text" ng-model="member.value" uib-typeahead="('&quot;\{\{' + var.name + '\}\}&quot;') as (var.name + ' = ' + var.value) for var in hostvars | filter: $viewValue"  class="form-control">-->
+                </div>
+                <!--<button class="btn btn-danger" ng-click="deleteProject()" confirm="Are you sure you want to delete?">Delete <span ng-if="!deleteProjectLoading" class="fa fa-trash"></span> <span ng-if="deleteProjectLoading" class="fa fa-spinner fa-spin"></span></button>-->
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+
+
+      <button class="btn btn-primary" ng-disabled="!newModule.module" ng-click="saveNewModule()"> Save <span ng-if="!saving" class="fa fa-save"></span> <span ng-if="saving" class="fa fa-spin fa-spinner"></span> </button>
+      <button class="btn btn-default" confirm="Are you sure you want to discard the changes?" ng-click="cancelNewModule()"> Cancel <span class="fa fa-times"></span> </button>
+
+    </div>
+
+
+</div>

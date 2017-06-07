@@ -1,0 +1,19 @@
+<!-- Modal content-->
+<div class="modal-content">
+  <div class="modal-header">
+    <h4 class="modal-title">{{title}}</h4>
+  </div>
+  <div class="modal-body">
+
+    <p class="form-group">
+      <label>Role Name</label>
+      <input type="text" ng-model="newRole.name" class="form-control">
+    </p>
+
+  </div>
+  <div class="alert alert-danger" ng-if="err_msg">{{err_msg}}</div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" ng-disabled="!newRole.name" ng-click="createRole()">Create <span ng-if="createRoleLoading" class="fa fa-spinner fa-spin"></span></button>
+    <button class="btn btn-default" type="button" ng-click="cancel()">Close</button>
+  </div>
+</div>

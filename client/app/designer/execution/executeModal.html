@@ -1,0 +1,185 @@
+<!-- Modal content-->
+<div class="modal-content">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" ng-click="cancel()">&times;</button>
+    <h4 class="modal-title">Play</h4>
+  </div>
+  <div class="modal-body">
+    <div class="row" id="PlaybookExecutionModal">
+      <!--<button class="btn btn-default" ng-click="view = (view === 'console' ? 'table' : 'console')">Toggle View</button>-->
+
+      <div style="background:black;color:lightgrey;width:100%;padding:20px;" ng-if="result" ng-show="view=='console'">
+        <p class="logconsole" ng-bind-html="result"></p>
+      </div>
+
+      <!--<div ng-if="ansibleOutputObject" ng-show="view=='table'" style="margin-top:20px;">
+
+        &lt;!&ndash;<div class="row" ng-repeat="resultItem in ansibleOutputResult">
+          <div class="col-md-1"><div class="btn btn-default">{{resultItem.type}}</div></div>
+          <div class="col-md-5"><div class="btn btn-primary">{{resultItem.name}}</div></div>
+          <div class="col-md-6"><div class="btn btn-info" ng-if="resultItem.host">{{resultItem.host}}</div></div>
+          <div class="col-md-offset-1 col-md-2"><div class="btn " ng-class="{'btn-success': resultItem.status == 'ok' || resultItem.status == 'changed', 'btn-danger': resultItem.status == 'fatal', 'btn-warning': resultItem.status == 'skipping'}" ng-if="resultItem.status">Status = {{resultItem.status}}</div></div>
+          <div class="col-md-3"><div class="btn btn-info" ng-if="resultItem.status_2.trim()">Status2 = {{resultItem.status_2}}</div></div>
+          <div class="col-md-3"><div class="btn" ng-if="resultItem.resultObject.changed.trim()" ng-class="{'btn-success': resultItem.resultObject.changed == true, 'btn-warning': resultItem.resultObject.changed == false}">Changed = {{resultItem.resultObject.changed}}</div></div>
+          <div class="col-md-3"><div class="btn" ng-if="resultItem.resultObject.failed" ng-class="{'btn-danger': resultItem.resultObject.failed}">Failed = {{resultItem.resultObject.failed}}</div></div>
+          <div class="col-md-offset-1 col-md-11" ng-if="resultItem.resultObject.msg" ><p style="background:grey;" class="logconsole">{{resultItem.resultObject.msg}}</p></div>
+          <div class="col-md-offset-1 col-md-11" ng-if="resultItem.resultObject.formattedStdErr" ><p style="color:#cd616b;" class="logconsole" ng-bind-html="resultItem.resultObject.formattedStdErr"></p></div>
+          <div class="col-md-offset-1 col-md-11" ng-if="resultItem.resultObject.formattedStdOut" ><p style="color:green;" class="logconsole" ng-bind-html="resultItem.resultObject.formattedStdOut"></p></div>
+          &lt;!&ndash;<div class="col-md-offset-1 col-md-11"><p class="logconsole">{{resultItem.resultString}}</p></div>&ndash;&gt;
+          <span class="fa fa-spinner fa-spin" ng-if="AnsiblePlayBookLoading && $last"></span>
+        </div>&ndash;&gt;
+
+        &lt;!&ndash;<div ng-repeat="(host, stats) in ansibleOutputObject.stats">
+
+          <span><b>Host : </b>{{host}}</span>
+          <span class="btn btn-default btn-info">OK <span class="badge">{{stats.ok}}</span></span>
+          <span class="btn btn-default" ng-class="{'btn-success': stats.changed}" >Changed <span class="badge">{{stats.changed}}</span></span>
+          <span class="btn btn-default" ng-class="{'btn-warning': stats.skipped}">Skipped <span class="badge">{{stats.skipped}}</span></span>
+          <span class="btn btn-default" ng-class="{'btn-danger': stats.unreachable}">Unreachable <span class="badge">{{stats.unreachable}}</span></span>
+          <span class="btn btn-default" ng-class="{'btn-danger': stats.failures}">Failures <span class="badge">{{stats.failures}}</span></span>
+
+        </div>&ndash;&gt;
+
+        <h3>Run Statistics</h3>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+            <tr>
+              <th>Host</th>
+              <th>Ok</th>
+              <th>Changed</th>
+              <th>Skipped</th>
+              <th>Unreachable</th>
+              <th>Failures</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="(host, stats) in ansibleOutputObject.stats">
+              <td>{{host}}</td>
+              <td>{{stats.ok}}</td>
+              <td><span ng-class="{'label label-success': stats.changed}">{{stats.changed}}</span></td>
+              <td><span ng-class="{'label label-warning': stats.skipped}">{{stats.skipped}}</span></td>
+              <td><span ng-class="{'label label-danger': stats.unreachable}">{{stats.unreachable}}</span></td>
+              <td><span ng-class="{'label label-danger': stats.failures}">{{stats.failures}}</span></td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+
+        <div class="row" ng-repeat="playObject in ansibleOutputObject.plays">
+
+          &lt;!&ndash;<div class="col-md-3"><div class="btn btn-default">Play - {{playObject.play.name}}</div></div>&ndash;&gt;
+
+          <div class="col-md-12">
+            <uib-accordion close-others="false">
+              <div uib-accordion-group class="panel-default" is-open="true" ng-repeat="taskObject in playObject.tasks">
+                <uib-accordion-heading>
+                  Play - {{playObject.play.name}} - Tasks - {{taskObject.task.name}}
+                  <span class="fa fa-spinner fa-spin" ng-if="AnsiblePlayBookLoading && $last"></span>
+                </uib-accordion-heading>
+
+                <div class="col-md-12" ng-repeat="(hostName, hostObject) in taskObject.hosts">
+                  <div class="col-md-3"><b>Host :</b> {{hostName}}</div>
+                  <div class="col-md-3"><b>Method :</b> {{hostObject.invocation && hostObject.invocation.module_name}}</div>
+                  <div class="col-md-2"><div class="btn" ng-class="{'btn-success': hostObject.changed == true, 'btn-warning': hostObject.changed == false}" style="padding: 2px 5px">Changed <span class="badge">{{hostObject.changed}}</span></div></div>
+                  <div class="col-md-2" ng-if="hostObject.skipped == true"><div class="btn" ng-class="{'btn-warning': hostObject.skipped == true}" style="padding: 2px 5px">Skipped <span class="badge">{{hostObject.skipped}}</span></div></div>
+                  <div class="col-md-1"><div class="btn btn-default" ng-show="hostObject.module_stderr || hostObject.stdout || hostObject.stderr || hostObject.msg" ng-click="hostObject.showLogs = !hostObject.showLogs" style="padding: 2px 5px">Logs</div></div>
+                  <div class="col-md-1"><div class="btn btn-warning" ng-show="hostObject.warnings.length" ng-click="hostObject.showWarnings = !hostObject.showWarnings" style="padding: 2px 5px">Warnings</div></div>
+
+                  <div class="col-md-2"><div class="btn btn-danger" ng-show="hostObject.rc && hostObject.rc != 0">Return Code - {{hostObject.rc}}</div></div>
+
+                  <div ng-show="hostObject.showLogs" class="col-md-12" ng-if="hostObject.stdout" ><p style="color:grey;" class="logconsole" ng-bind-html="hostObject.stdout | replaceLineBreaks"></p></div>
+                  <div ng-show="hostObject.showLogs" class="col-md-12" ng-if="hostObject.msg" ><p style="color:grey;" class="logconsole" ng-bind-html="hostObject.msg | replaceLineBreaks"></p></div>
+                  <div ng-show="hostObject.showLogs" class="col-md-12" ng-if="hostObject.stderr" ><p style="color:#cd616b;" class="logconsole" ng-bind-html="hostObject.stderr | replaceLineBreaks"></p></div>
+                  <div ng-show="hostObject.showLogs" class="col-md-12" ng-if="hostObject.module_stderr" ><p style="color:#cd616b;" class="logconsole" ng-bind-html="hostObject.module_stderr | replaceLineBreaks"></p></div>
+                  <div ng-show="hostObject.showWarnings" class="col-md-12" ng-if="hostObject.warnings.length" ><p style="color:orangered;" class="logconsole" ng-bind-html="hostObject.warnings.join('\n') | replaceLineBreaks"></p></div>
+
+                </div>
+
+              </div>
+            </uib-accordion>
+          </div>
+
+        </div>
+
+
+      </div>-->
+    </div>
+
+    <div class="row" ng-if="!readOnly">
+      <div class="col-md-3">
+        <div class="input-group">
+          <span class="input-group-addon" >Inventory Files</span>
+          <!--<input ng-model="newPlay.hosts" type="text" class="form-control" placeholder="Playbook Name">-->
+          <select class="form-control" ng-model="selectedInventoryFile.value" ng-options="inventoryFile as inventoryFile for inventoryFile in inventoryFiles" ng-disabled="!inventoryFiles">
+          </select>
+        </div>
+      </div>
+      <div class="col-md-9">
+        <btn class="checkbox-inline"><input type="checkbox" ng-true-value="'Check'" ng-false-value="'No_Check'" ng-model="check_mode.value">Check Mode</btn>
+        <btn class="checkbox-inline"><input type="checkbox" ng-true-value="'verbose'" ng-model="verbose.value">Verbose</btn>
+        <btn class="checkbox-inline"><input type="checkbox" ng-true-value="'verbose_detail'" ng-model="verbose_detail.value">Verbose Detail</btn>
+        <btn class="checkbox-inline"><input type="checkbox" ng-model="refreshLog">Refresh Logs</btn>
+        <btn class="checkbox-inline"><input type="checkbox" ng-model="additional_tags.show">Tags</btn>
+        <btn class="checkbox-inline"><input type="checkbox" ng-model="additional_tags.vars">Vars</btn>
+      </div>
+      <div class="clearfix"></div>
+      <div class="col-md-6" ng-show="additional_tags.show">
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+            <tr>
+              <th>Select</th>
+              <th>Tag</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="tag in all_tags">
+              <td><input type="checkbox" ng-model="tag.selected">
+              </td>
+              <td>{{tag.name}}</td>
+
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="col-md-6" ng-show="additional_tags.show">
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+            <tr>
+              <th>Select</th>
+              <th>Host</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="host in all_hosts">
+              <td><input type="checkbox" ng-model="host.selected">
+              </td>
+              <td>{{host.name}}</td>
+
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div ng-show="additional_vars.show">
+        <complex-var members="complexVar" path="'Parent'" type="'object'" input-width="'400px'">
+        </complex-var>
+      </div>
+
+    </div>
+
+  </div>
+  <div class="alert alert-danger" ng-if="err_msg">{{err_msg}}</div>
+  <div class="modal-footer">
+    <button class="btn btn-success" type="button" ng-if="!readOnly" ng-disabled="!selectedInventoryFile.value || !readyForPlay" ng-click="Run()">Play <span class="fa fa-play" ng-if="!AnsiblePlayBookLoading"></span> <span class="fa fa-spinner fa-spin" ng-if="AnsiblePlayBookLoading"></span></button>
+    <button class="btn btn-default" type="button" ng-click="cancel()">Close</button>
+  </div>
+</div>
+
+

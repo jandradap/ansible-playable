@@ -1,0 +1,154 @@
+<div class="col-md-8">
+  <button class="btn btn-default" ng-click="showCreatInventoryModal()">Create Inventory <span class="fa fa-plus"></span></button>
+  <!--<button class="btn btn-default" ng-if="!editInventory.value" ng-click="editInventory.value = true">Edit <span ng-if="!saveInventoryLoading"  class="fa fa-edit"></span></button>
+  <button class="btn btn-primary" ng-if="editInventory.value" ng-disabled="!selectedInventory.inventory" ng-click="saveInventory()">Save <span ng-if="!saveInventoryLoading"  class="fa fa-save"></span><span ng-if="saveInventoryLoading" class="fa fa-spinner fa-spin"></span></button>-->
+  <button class="btn btn-danger" confirm="Are you sure you want to delete inventory? " ng-disabled="!selectedInventory.inventory" ng-click="deleteInventory()">Delete <span ng-if="!deleteInventoryLoading"  class="fa fa-trash-o"></span><span ng-if="deleteInventoryLoading" class="fa fa-spinner fa-spin"></span></button>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Select</th>
+        <th>Name</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr ng-repeat="inventory in inventorys">
+        <td><input name="playGroup" type="radio" ng-model="selectedInventory.inventory" ng-value="inventory">
+        </td>
+        <td>{{inventory}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+
+      <div class="panel">
+        <div class="panel panel-default">
+          <div class="panel-heading">Groups - {{inventory_data_json.groups.length}}</div>
+          <div class="panel-body">
+            <button class="btn btn-default" ng-disabled="!selectedInventory.inventory" ng-click="showCreateGroupModal()">Create Group <span class="fa fa-plus"></span></button>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                <tr>
+                  <th>Select</th>
+                  <th>Name</th>
+                  <th>Members</th>
+                  <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="group in inventory_data_json.groups">
+                  <td><input name="groupsRadioGroup" type="radio" ng-model="selectedGroup.group" ng-value="group">
+                  </td>
+                  <td>{{group.name}}</td>
+                  <td>{{group.members.length}}</td>
+                  <td>
+                    <div class="btn-group">
+                      <label ng-show="group.type == 'userdefined'" class="btn btn-default btn-xs" ng-click="editGroup(group)" ><span class="fa fa-edit"></span></label>
+                      <label ng-show="group.type == 'userdefined'" class="btn btn-danger btn-xs" confirm="Are you sure you want to delete this group?" ng-click="deleteGroup($index)" ><span class="fa fa-trash-o"></span></label>
+                    </div>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" ng-show="selectedGroup.group.members">
+        <div class="panel panel-default">
+          <div class="panel-heading">Group Members - {{selectedGroup.group.name}}</div>
+          <div class="panel-body">
+
+            <div class="table-responsive" >
+              <table class="table">
+                <thead>
+                <tr>
+                  <th>Select</th>
+                  <th>Name</th>
+                  <th>Actions</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="host in selectedGroup.group.members">
+                  <td><input name="hostsRadioGroup" type="radio" ng-model="selectedHost.host" ng-value="host">
+                  </td>
+                  <td>{{host}}</td>
+                  <td>
+                    <div class="btn-group">
+                      <label class="btn btn-danger btn-xs" confirm="Are you sure you want to delete host and remove it from all groups?" ng-click="deleteHost($index)" ><span class="fa fa-trash-o"></span></label>
+                    </div>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="col-md-6">
+      <div class="panel">
+        <div class="panel panel-default">
+          <div class="panel-heading">Hosts - {{inventory_data_json.hosts.length}}</div>
+          <div class="panel-body">
+            <button class="btn btn-default" ng-disabled="!selectedInventory.inventory" ng-click="showCreateHostModal()">Create Host <span class="fa fa-plus"></span></button>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                <tr>
+                  <th>Select</th>
+                  <th>Name</th>
+                  <th>Actions</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="host in inventory_data_json.hosts">
+                  <td><input name="hostsRadioGroup" type="radio" ng-model="selectedHost.host" ng-value="host">
+                  </td>
+                  <td>{{host}}</td>
+                  <td>
+                    <div class="btn-group">
+                      <label class="btn btn-default btn-xs" ng-click="editHost(host)" ><span class="fa fa-edit"></span></label>
+                      <label class="btn btn-danger btn-xs" confirm="Are you sure you want to delete host and remove it from all groups?" ng-click="deleteHost($index)" ><span class="fa fa-trash-o"></span></label>
+                    </div>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+
+    </div>
+
+  </div>
+
+</div>
+
+<div class="col-md-4">
+
+  <div ng-readonly="!editInventory.value" ui-ace="{theme:'twilight',document:'INI',mode:'ini',onChange:codeChanged,onLoad:aceLoaded}" ng-model="selectedInventory.content">
+
+  </div>
+
+</div>

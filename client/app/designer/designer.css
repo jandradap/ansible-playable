@@ -1,0 +1,10 @@
+.logconsole {
+  font:12px/normal 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas';
+  color: #fff;
+  padding:5px;
+  margin:5px;
+  font-size:14px;
+  background: black;
+}
+
+.ace_editor { height: 800px; }

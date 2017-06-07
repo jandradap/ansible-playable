@@ -1,0 +1,44 @@
+
+<div class="container">
+  <p class="form-group">
+    <label>Projects </label>
+    <select class="form-control" ng-model="selectedProjectID" ng-change="projectSelected(selectedProjectID)" ng-options="project._id as project.name for project in projects">
+    </select>
+  </p>
+
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+      <tr>
+        <!--<th>Name</th>-->
+        <th>Hosts</th>
+        <th>Tags</th>
+        <th>Verbose</th>
+        <th>Check Mode</th>
+        <th>Selected Playbook</th>
+        <th>Type</th>
+        <th>Name</th>
+        <!--<th>Logfile</th>-->
+        <th>Time</th>
+        <th>Logs</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr ng-repeat="run in runs | orderBy : '-executionTime'">
+        <!--<td>{{run.name}}</td>-->
+        <td>{{run.host}}</td>
+        <td>{{run.tags.join(', ')}}</td>
+        <td>{{run.verbose}}</td>
+        <td>{{run.check_mode}}</td>
+        <td>{{run.selectedPlaybook}}</td>
+        <td>{{run.executionType}}</td>
+        <td>{{run.executionName}}</td>
+        <!--<td>{{run.logfile}}</td>-->
+        <td>{{run.executionTime | date : 'medium'}}</td>
+        <td><button class="btn btn-default" ng-click="showLogs(run)">Logs</button></td>
+
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

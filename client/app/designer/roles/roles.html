@@ -1,0 +1,110 @@
+<div class="col-md-6">
+  <uib-accordion close-others="false">
+
+    <div uib-accordion-group class="panel-default" is-open="isopen.roles">
+      <uib-accordion-heading>
+        Roles <i class="pull-right glyphicon"
+                 ng-class="{'glyphicon-chevron-down': isopen.roles, 'glyphicon-chevron-right': !isopen.roles}"></i>
+      </uib-accordion-heading>
+
+      <button class="btn btn-default" ng-click="showCreateRoleModal()">Create Role <span class="fa fa-plus"></span>
+      </button>
+      <button class="btn btn-default" ng-click="showSearchRoleModal()">Import Role <span
+        class="fa fa-cloud-download"></span></button>
+      <button class="btn btn-default" ng-disabled="!selectedRole.role" ng-click="showCreateRoleModal(true)">Copy Role <span class="fa fa-copy"></span>
+      </button>
+      <!--<button class="btn btn-default" ng-if="!editRole.value" ng-disabled="!selectedRole.role" ng-click="editRole.value = true">Edit <span
+        ng-if="!saveRoleLoading" class="fa fa-edit"></span></button>
+      <button class="btn btn-primary" ng-if="editRole.value" ng-disabled="!selectedRole.role" ng-click="saveRole()">Save
+        <span ng-if="!saveRoleLoading" class="fa fa-save"></span><span ng-if="saveRoleLoading"
+                                                                       class="fa fa-spinner fa-spin"></span></button>-->
+      <button class="btn btn-danger" confirm="Are you sure you want to delete the role and all its contents? "
+              ng-disabled="!selectedRole.role" ng-click="deleteRole()">Delete <span ng-if="!deleteRoleLoading"
+                                                                                    class="fa fa-save"></span><span
+        ng-if="deleteRoleLoading" class="fa fa-spinner fa-spin"></span></button>
+
+      <button class="btn btn-success"
+              ng-disabled="!selectedRole.role" ng-click="executeAnsiblePlayBook(null,'Role',selectedRole.role,null)">Test <span
+        class="fa fa-play"></span></button>
+
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+          <tr>
+            <th>Select</th>
+            <th>Name</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr ng-repeat="role in roles">
+            <td><input name="playGroup" type="radio" ng-model="selectedRole.role" ng-value="role">
+            </td>
+            <td>{{role}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <div uib-accordion-group class="panel-default" is-open="isopen.filebrowser" ng-show="roleData">
+      <uib-accordion-heading>
+        File Browser {{selectedRole.role ? '-' + selectedRole.role : ''}} <i class="pull-right glyphicon"
+                                                                             ng-class="{'glyphicon-chevron-down': isopen.filebrowser, 'glyphicon-chevron-right': !isopen.filebrowser}"></i>
+      </uib-accordion-heading>
+
+      <treecontrol ng-show="roleData.children" class="tree-classic"
+                   tree-model="roleData.children"
+                   options="treeOptions"
+                   on-selection="showSelected(node, $parentNode)"
+                   selected-node="selectedFile"
+                   filter-expression="{name: '!.git'}">
+        {{node.name}}
+      </treecontrol>
+
+      <button class="btn btn-default" ng-click="showCreateFileModal(selectedFile)" ng-disabled="!(selectedFile.type === 'directory')">Create File <span class="fa fa-plus"></span>
+      </button>
+      <button class="btn btn-default" ng-show="!editRole.value" ng-disabled="!(selectedFile.type === 'file') || encryptedFile" ng-click="editFile(selectedFile)">Edit File <span class="fa fa-edit"></span>
+      </button>
+      <button class="btn btn-primary" ng-show="showSaveFileButton" ng-disabled="encryptedFile" ng-click="saveFile(selectedFile)">Save File <span ng-show="!showSaveFileButtonLoading" class="fa fa-save"></span><span ng-show="showSaveFileButtonLoading" class="fa fa-spin fa-spinner"></span>
+      </button>
+      <button class="btn btn-warning" ng-show="showSaveFileButton" confirm="Are you sure you want to cancel and discard the changes?" ng-click="cancelFileChanges(selectedFile)">Cancel <span class="fa fa-times"></span>
+      </button>
+      <button class="btn btn-danger" ng-disabled="!selectedFile.type" confirm="Are you sure you want to delete the selected {{selectedFile.type}}?" ng-click="deleteFile(selectedFile)">Delete <span class="fa fa-trash-o"></span>
+      </button>
+
+    </div>
+
+    <div uib-accordion-group class="panel-default" is-open="isopen.tasks" ng-show="selectedRole.tasks">
+      <uib-accordion-heading>
+        Tasks {{selectedRole.role ? '-' + selectedRole.role : ''}} <i class="pull-right glyphicon"
+                                                                      ng-class="{'glyphicon-chevron-down': isopen.tasks, 'glyphicon-chevron-right': !isopen.tasks}"></i>
+      </uib-accordion-heading>
+
+      <tasks tasks-list="selectedRole.tasks" update-playbook-file-content="updatePlaybookFileContent" selected-play="selectedPlay" selected-role="selectedRole" move-up="moveUp" move-down="moveDown" save-playbook="saveTasksFile" files="parentNode.children" execute-ansible-play-book="executeAnsiblePlayBook"></tasks>
+    </div>
+
+  </uib-accordion>
+
+
+</div>
+</div>
+
+<div class="col-md-6">
+
+  <button class="btn btn-default" ng-show="selectedFile.docType == 'markdown' && !selectedFile.showSource" ng-click="selectedFile.showSource = true"> Show
+    Source
+  </button>
+  <button class="btn btn-default" ng-show="selectedFile.docType == 'markdown' && selectedFile.showSource" ng-click="selectedFile.showSource = false"> Hide
+    Source
+  </button>
+  <!--{{docType}}-->
+  <div ng-show="selectedFile.showSource" ng-readonly="!editRole.value"
+       ui-ace="{theme:'twilight',document:selectedFile.docType,mode:selectedFile.docType,onChange:codeChanged,onLoad:aceLoaded}" ng-model="selectedFile.content">
+
+  </div>
+
+  <div ng-show="!selectedFile.showSource" btf-markdown="selectedFile.markdownContent">
+  </div>
+
+</div>
