@@ -38,9 +38,7 @@ RUN npm install -g yo gulp-cli generator-angular-fullstack
 USER app_user
 
 RUN mkdir -p /data/web-app
-
 COPY ./package.json /data/web-app
-RUN npm install
 
 # Assign permissions to app_user
 USER root
@@ -48,6 +46,8 @@ RUN chown -R app_user /data/web-app
 
 # Change user to app_user
 USER app_user
+
+RUN npm install
 
 # Copy all application files
 WORKDIR /data/web-app
