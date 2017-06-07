@@ -35,7 +35,7 @@ RUN service ssh start
 USER app_user
 
 RUN mkdir -p /data/web-app
-COPY * /data/web-app
+COPY * /data/web-app/
 
 USER root
 RUN chown -R app_user /data/web-app
