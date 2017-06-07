@@ -22,3 +22,6 @@ pipelines:
           - docker login --username $DOCKER_HUB_USERNAME --password $DOCKER_HUB_PASSWORD
           # push the new Docker image to the Docker registry
           - docker push $IMAGE_NAME
+          # Tag to latest and push to latest
+          - docker tag IMAGE_NAME mmumshad/ansible-playable:latest
+          - docker push mmumshad/ansible-playable:latest
