@@ -11,8 +11,19 @@ services:
 before_script:
 - docker info
 
-build:
+stages:
+  - build
+  - test
+
+
+job1:
   stage: build
   script:
   - docker build -t ansible-playable-test .
-  - docker run ansible-playable-test
+
+
+job2:
+  stage: test
+  script:
+  - docker run  --name afs-mongo -d mongo
+  - docker run -it -p 9522:22 -p 9500:9000 -p 3500:3000 -p 3502:3002 -p 3501:3001 --link afs-mongo:db  ansible-playable-test
