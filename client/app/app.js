@@ -10,6 +10,7 @@ import uiRouter from 'angular-ui-router';
 import uiBootstrap from 'angular-ui-bootstrap';
 import 'angular-validation-match';
 
+import 'angular-confirm';
 
 import 'angular-ui-ace';
 
@@ -90,7 +91,7 @@ import editor from './services/editor/editor.service';
 import './app.css';
 
 angular.module('app2App', [ngCookies, ngResource, ngSanitize, uiRouter, uiBootstrap, _Auth, account,
-  admin, 'validation.match', 'ui.ace', navbar, footer, main, constants, util, ansi2html, ngAnimate,
+  admin, 'validation.match', 'ui.ace', navbar, footer, main, constants, util, ansi2html, ngAnimate, 'angular-confirm',
   // Components
   DesignerComponent, ProjectComponent, InventoryComponent, PlaybookComponent, FileBrowserComponent, RolesComponent, RunsComponent, CustomModulesComponent,
   // Services
