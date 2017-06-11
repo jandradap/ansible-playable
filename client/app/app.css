@@ -127,5 +127,8 @@
   color: #333;
 }
 
-.ace_editor { height: 800px; }
+.ace_editor {
+  height: 800px;
+  font-family: Consolas;
+}
 
