@@ -1,7 +1,7 @@
 'use strict';
 
 import angular from 'angular';
-// import ngAnimate from 'angular-animate';
+import ngAnimate from 'angular-animate';
 import ngCookies from 'angular-cookies';
 import ngResource from 'angular-resource';
 import ngSanitize from 'angular-sanitize';
@@ -90,7 +90,7 @@ import editor from './services/editor/editor.service';
 import './app.css';
 
 angular.module('app2App', [ngCookies, ngResource, ngSanitize, uiRouter, uiBootstrap, _Auth, account,
-  admin, 'validation.match', 'ui.ace', navbar, footer, main, constants, util, ansi2html,
+  admin, 'validation.match', 'ui.ace', navbar, footer, main, constants, util, ansi2html, ngAnimate,
   // Components
   DesignerComponent, ProjectComponent, InventoryComponent, PlaybookComponent, FileBrowserComponent, RolesComponent, RunsComponent, CustomModulesComponent,
   // Services

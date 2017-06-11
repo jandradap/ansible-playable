@@ -34,6 +34,12 @@
  * App-wide Styles
  */
 
+@font-face{
+  font-family: "ExpletusSans-Regular";
+  src: url('/assets/fonts/ExpletusSans-Regular.ttf'),
+  url('/assets/fonts/ExpletusSans-Regular.ttf'); /* IE */
+}
+
 .browserupgrade {
   margin: 0.2em 0;
   background: #ccc;
@@ -72,7 +78,7 @@
 }
 
 .navbar-default .navbar-brand {
-  color: white;
+  color:#ffa800;
 }
 
 .navbar-default .navbar-nav > li > a {
