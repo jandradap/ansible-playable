@@ -6,12 +6,13 @@
 
 import errors from './components/errors';
 import path from 'path';
+import * as auth from './auth/auth.service';
 
 export default function(app) {
   // Insert routes below
-  app.use('/api/custom_modules', require('./api/custom_module'));
-  app.use('/api/ansible', require('./api/ansible'));
-  app.use('/api/projects', require('./api/project'));
+  app.use('/api/custom_modules', auth.isAuthenticated(), require('./api/custom_module'));
+  app.use('/api/ansible', auth.isAuthenticated(), require('./api/ansible'));
+  app.use('/api/projects', auth.isAuthenticated(), require('./api/project'));
   app.use('/api/things', require('./api/thing'));
   app.use('/api/users', require('./api/user'));
 
