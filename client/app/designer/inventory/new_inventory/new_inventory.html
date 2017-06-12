@@ -6,11 +6,11 @@
   <div class="modal-body">
 
     <p class="form-group">
-      <label>Inventory Name</label>
-      <input type="text" ng-model="newInventory.name" class="form-control">
+      <label>Inventory File Name</label>
+      <input placeholder="inventory" type="text" ng-model="newInventory.name" class="form-control">
     </p>
 
-    <div class="alert alert-info"> Inventory files should be named without an extension </div>
+    <div class="alert alert-info"> Inventory files are usually named without any extension eg: inventory </div>
 
   </div>
   <div class="alert alert-danger" ng-if="err_msg">{{err_msg}}</div>

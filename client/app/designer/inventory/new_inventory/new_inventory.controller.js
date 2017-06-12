@@ -3,7 +3,7 @@ const angular = require('angular');
 
 /*@ngInject*/
 export function newInventoryController($scope,$uibModalInstance,ansible,selectedProject) {
-  $scope.newInventory = {name:null};
+  $scope.newInventory = {name:'inventory'};
 
   $scope.createInventoryLoading = false;
 
