@@ -3,7 +3,7 @@ import config from '../../config/environment';
 var client = require('scp2');
 
 
-exports.copyFileToScriptEngine = function(sourcePath,destinationPath,ansibleEngine){
+exports.copyFileToScriptEngine = function(sourcePath,destinationPath,ansibleEngine,successCallback,errorCallback){
 
   var connHost = ansibleEngine.ansibleHost || config.scriptEngine.host;
   var connUser = ansibleEngine.ansibleHostUser || config.scriptEngine.user;
@@ -32,15 +32,18 @@ exports.copyFileToScriptEngine = function(sourcePath,destinationPath,ansibleEngi
 
   cl.on('error', function(error) {
     console.log("SCP Connect Error" + error);
+    errorCallback && errorCallback(err);
     return error
   });
 
   cl.upload(sourcePath,destinationPath,function(err) {
     if(err){
-      console.error(err)
+      console.error(err);
+      errorCallback && errorCallback(err);
     }else{
-      console.log("Successfully uploaded file")
-      cl.close()
+      console.log("Successfully uploaded file");
+      cl.close();
+      successCallback("Successfully uploaded file")
     }
   })
 };

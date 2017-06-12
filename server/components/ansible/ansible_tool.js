@@ -70,7 +70,7 @@ exports.executeAnsible = function(logfilename,project_folder, playbook_name, inv
   fs.writeFileSync(logFile," Completed \n",{'flag':'a'});
 
   // export ANSIBLE_GATHERING=FALSE;
-  var command= 'export ANSIBLE_FORCE_COLOR=true; export ANSIBLE_HOST_KEY_CHECKING=False; cd "' + project_folder + '";  ansible-playbook --vault-password-file ~/.vault_pass.txt "' + playbook_name + '" -i "' + inventory_file_name + '"';
+  var command= 'export ANSIBLE_FORCE_COLOR=true; export ANSIBLE_HOST_KEY_CHECKING=False; cd "' + project_folder + '";  ansible-playbook "' + playbook_name + '" -i "' + inventory_file_name + '"';
 
   if(ansibleEngine.customModules){
     command = 'export ANSIBLE_LIBRARY="' + ansibleEngine.customModules + '"; ' + command;
@@ -125,7 +125,7 @@ exports.getVars = function(project_folder, inventory_file_name, host_name, dataC
 
   var fs = require('filendir');
 
-  var AnsibleAPILocation = '/opt/ehc-builder-scripts/ansible_modules/AnsibleAPI.py';
+  var AnsibleAPILocation = '/tmp/AnsibleAPI.py';
 
   var command= 'cd "' + project_folder + '";  python "' + AnsibleAPILocation + '" host_vars --inventory_file="' + inventory_file_name + '"';
 
@@ -139,18 +139,20 @@ exports.getVars = function(project_folder, inventory_file_name, host_name, dataC
 
   console.log("Command= " + command);
 
-  ssh2_exec.executeCommand(command,null,successCallback,errorCallback,ansibleEngine);
+  scp2_exec.copyFileToScriptEngine('./helpers/AnsibleAPI.py',AnsibleAPILocation,ansibleEngine,function(){
+    ssh2_exec.executeCommand(command,null,successCallback,errorCallback,ansibleEngine);
+  }, errorCallback);
 
 };
 
 
 exports.getRolesVars = function(project_folder, role_name, dataCallback, successCallback,errorCallback,ansibleEngine){
 
-  var AnsibleAPILocation = '/opt/ehc-builder-scripts/ansible_modules/AnsibleAPI.py';
+  var AnsibleAPILocation = '/tmp/AnsibleAPI.py';
 
   var project_roles_folder = project_folder + '/roles';
   var playbook_path = role_name + '/tests/test.yml';
-  var command= 'cd "' + project_roles_folder + '";  python "' + AnsibleAPILocation + '" role_vars --playbook_path="' + playbook_path + '" --vault_password_file ~/.vault_pass.txt';
+  var command= 'cd "' + project_roles_folder + '";  python "' + AnsibleAPILocation + '" role_vars --playbook_path="' + playbook_path + '" ';
 
   if(ansibleEngine.customModules){
     command = 'export ANSIBLE_LIBRARY="' + ansibleEngine.customModules + '"; ' + command;
@@ -158,7 +160,10 @@ exports.getRolesVars = function(project_folder, role_name, dataCallback, success
 
   console.log("Command= " + command);
 
-  ssh2_exec.executeCommand(command,null,successCallback,errorCallback,ansibleEngine);
+  scp2_exec.copyFileToScriptEngine('./helpers/AnsibleAPI.py',AnsibleAPILocation,ansibleEngine,function(){
+    ssh2_exec.executeCommand(command,null,successCallback,errorCallback,ansibleEngine);
+  }, errorCallback);
+
 
 };
 
@@ -565,10 +570,11 @@ exports.importRole = function(roleType, roleNameUri, successCallback, errorCallb
 exports.getRoleFiles = function(roleName, successCallback, errorCallback, ansibleEngine){
 
   var projectFolder = ansibleEngine.projectFolder;
-  // var command = 'node /opt/node-programs/dirTree.js "' + projectFolder + '/roles/' + roleName + '"';
-  var command = 'cd "' + projectFolder + '/roles/' + roleName + '"; python /opt/ehc-builder-scripts/bin/dir_tree.py';
+  var command = 'cd "' + projectFolder + '/roles/' + roleName + '"; python /tmp/dir_tree.py';
 
-  ssh2_exec.executeCommand(command,null,successCallback,errorCallback,ansibleEngine);
+  scp2_exec.copyFileToScriptEngine('./helpers/dir_tree.py','/tmp/dir_tree.py',ansibleEngine,function(){
+    ssh2_exec.executeCommand(command,null,successCallback,errorCallback,ansibleEngine);
+  }. errorCallback);
 
 };
 
@@ -581,10 +587,11 @@ exports.getRoleFiles = function(roleName, successCallback, errorCallback, ansibl
 exports.getProjectFiles = function(successCallback, errorCallback, ansibleEngine){
 
   var projectFolder = ansibleEngine.projectFolder;
-  // var command = 'node /opt/node-programs/dirTree.js "' + projectFolder + '/roles/' + roleName + '"';
-  var command = 'cd "' + projectFolder + '"; python /opt/ehc-builder-scripts/bin/dir_tree.py';
+  var command = 'cd "' + projectFolder + '"; python /tmp/dir_tree.py';
 
-  ssh2_exec.executeCommand(command,null,successCallback,errorCallback,ansibleEngine);
+  scp2_exec.copyFileToScriptEngine('./helpers/dir_tree.py','/tmp/dir_tree.py',ansibleEngine,function(response){
+    ssh2_exec.executeCommand(command,null,successCallback,errorCallback,ansibleEngine);
+  }, errorCallback);
 
 };
 
@@ -599,14 +606,20 @@ exports.getProjectFiles = function(successCallback, errorCallback, ansibleEngine
  */
 exports.getTagList = function(project_folder, playbook_name, inventory_file_name, successCallback, errorCallback, ansibleEngine){
 
-  //var command = 'cd "' + project_folder + '";  ansible-playbook --vault-password-file ~/.vault_pass.txt "' + playbook_name + '" -i "' + inventory_file_name + '" --list-tags';
-  var command = 'cd "' + project_folder + '"; python2.7 /opt/ehc-builder-scripts/ansible_modules/my_playbook.py --vault-password-file ~/.vault_pass.txt "' + playbook_name + '" -i "' + inventory_file_name + '" --list-hosts  --list-tasks-json ';
+  var command = 'cd "' + project_folder + '"; python2.7 /tmp/list_tasks_json.py "' + playbook_name + '" -i "' + inventory_file_name + '" --list-hosts  --list-tasks-json ';
 
   if(ansibleEngine.customModules){
     command = 'export ANSIBLE_LIBRARY="' + ansibleEngine.customModules + '"; ' + command;
   }
 
-  ssh2_exec.executeCommand(command,null,successCallback,errorCallback,ansibleEngine);
+  console.log("Command = " + command);
+
+  scp2_exec.copyFileToScriptEngine('./helpers/list_tasks_json.py','/tmp/list_tasks_json.py',ansibleEngine,function(response){
+    console.log("Executing sshc command = " + command);
+    ssh2_exec.executeCommand(command,null,successCallback,errorCallback,ansibleEngine);
+  }, errorCallback);
+
+
 
 };
 
