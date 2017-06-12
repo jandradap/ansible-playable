@@ -7,7 +7,7 @@ import routes from './project.routes';
 
 export class ProjectComponent {
   /*@ngInject*/
-  constructor($scope, Projects) {
+  constructor($scope, Projects, Auth) {
     'ngInject';
     var default_project_folder = '/opt/ehc-ansible-projects/';
 
@@ -104,8 +104,11 @@ export class ProjectComponent {
 
     $scope.$watch('newProject.name', function(newValue, oldValue){
       console.log("Changed");
-      $scope.newProject.ansibleEngine.projectFolder = '/opt/ansible-projects/' + newValue;
-      $scope.newProject.ansibleEngine.customModules = '/opt/ansible-projects/' + newValue + '/library';
+      // Project folders cannot be edited once created
+      var user_id = Auth.getCurrentUserSync()._id;
+      if($scope.editProjectFlag)return;
+      $scope.newProject.ansibleEngine.projectFolder = '/opt/ansible-projects/' + user_id + '_' + newValue;
+      $scope.newProject.ansibleEngine.customModules = '/opt/ansible-projects/' + user_id + '_' + newValue + '/library';
     });
 
   }

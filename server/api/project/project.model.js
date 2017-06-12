@@ -15,7 +15,10 @@ var ProjectSchema = new mongoose.Schema({
   inventory_data: String, //YAML Format
   inventory_data_json: {}, //JSON Format
   roles_data: String, //YAML Format
-  roles_data_json: {} //JSON Format
+  roles_data_json: {}, //JSON Format
+  owner_id: String,
+  owner_name: String,
+  members: []
 });
 
 registerEvents(ProjectSchema);

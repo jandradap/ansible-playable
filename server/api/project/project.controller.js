@@ -12,6 +12,7 @@
 
 import jsonpatch from 'fast-json-patch';
 import Project from './project.model';
+import config from '../../config/environment';
 var ansibleTool = require('../../components/ansible/ansible_tool');
 
 function respondWithResult(res, statusCode) {
@@ -68,7 +69,17 @@ function handleError(res, statusCode) {
 // Gets a list of Projects
 export function index(req, res) {
   console.log("Getting projects list");
-  return Project.find().exec()
+
+  let filter ={owner_id: req.user._id};
+
+  if(config.userRoles.indexOf(req.user.role) >= config.userRoles.indexOf('admin')){
+    console.log("User is admin");
+    filter = {}
+  }
+
+  console.log("Filter =" + JSON.stringify(filter));
+
+  return Project.find(filter).exec()
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
@@ -88,6 +99,36 @@ export function create(req, res) {
   var ansibleEngine = req.body.ansibleEngine;
 
   console.log("Ansible Engine " + JSON.stringify(ansibleEngine));
+
+  req.body.owner_id = req.user._id;
+  req.body.owner_name = req.user.name;
+
+  // Set default values
+  if(!ansibleEngine.ansibleHost){
+    ansibleEngine = {
+      ansibleHost: config.scriptEngine.host,
+      ansibleHostUser: config.scriptEngine.user,
+      ansibleHostPassword: config.scriptEngine.password
+    };
+
+    // Update project request body to save in db, without password
+    req.body.ansibleEngine = {
+      ansibleHost: config.scriptEngine.host,
+      ansibleHostUser: config.scriptEngine.user
+    };
+  }
+
+
+  if(!ansibleEngine.projectFolder){
+    ansibleEngine.projectFolder = '/opt/ansible-projects/' + req.user._id + '_' + req.body.name;
+    ansibleEngine.customModules = '/opt/ansible-projects/' + req.user._id + '_' + req.body.name + '/library';
+
+    // Update project request body to save in db
+    req.body.ansibleEngine.projectFolder = ansibleEngine.projectFolder;
+    req.body.ansibleEngine.customModules = ansibleEngine.customModules;
+
+  }
+
 
   if(ansibleEngine.ansibleHost){
     ansibleTool.getAnsibleVersion(

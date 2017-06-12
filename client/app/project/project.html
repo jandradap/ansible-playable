@@ -28,14 +28,14 @@
 
         <p class="form-group" ng-if="newProject.ansibleEngine.ansibleHost">
           <label>Project Folder</label>
-          <input ng-model="newProject.ansibleEngine.projectFolder" class="form-control">
-          <div ng-if="newProject.ansibleEngine.ansibleHost" class="hint">A directory path to store files of this project </div>
+          <input ng-readonly="editProjectFlag" ng-model="newProject.ansibleEngine.projectFolder" class="form-control">
+          <div ng-if="newProject.ansibleEngine.ansibleHost" class="hint">A directory path on the Ansible Host to store files of this project </div>
         </p>
 
         <p class="form-group" ng-if="newProject.ansibleEngine.ansibleHost">
           <label>Custom Modules Location</label>
-          <input ng-model="newProject.ansibleEngine.customModules" class="form-control">
-          <div ng-if="newProject.ansibleEngine.ansibleHost" class="hint">A directory path to store custom modules for this project </div>
+          <input ng-readonly="editProjectFlag" ng-model="newProject.ansibleEngine.customModules" class="form-control">
+          <div ng-if="newProject.ansibleEngine.ansibleHost" class="hint">A directory path on the Ansible Host to store custom modules for this project </div>
         </p>
 
         <button class="btn btn-success" ng-disabled="!newProject.name" ng-click="createProject()"> Save <span class="fa {{saveButtonIcon}}"></span></button>
@@ -57,6 +57,7 @@
         <th>Name</th>
         <th>Ansible Host</th>
         <th>Ansible Version</th>
+        <th>Owner</th>
         <th>Time</th>
         <th>Actions</th>
       </tr>
@@ -66,6 +67,7 @@
         <td>{{project.name}}</td>
         <td>{{project.ansibleEngine.ansibleHost}}</td>
         <td>{{project.ansibleVersion}}</td>
+        <td>{{project.owner_name}}</td>
         <td>{{project.creationTime | date : 'medium'}}</td>
         <td>
           <div class="btn-group">
