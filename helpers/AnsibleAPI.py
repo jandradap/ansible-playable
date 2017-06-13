@@ -85,7 +85,7 @@ def play_vars():
 
 def role_vars():
     parser.add_argument('--playbook_path', help='Test Playbook path for role - usually role/tests/test.yml', required=True)
-    parser.add_argument('--vault_password_file', help='Vault password file - usually role/tests/test.yml', required=True)
+    parser.add_argument('--vault_password_file', help='Vault password file - usually role/tests/test.yml')
     args = parser.parse_args()
 
     variable_manager = VariableManager()

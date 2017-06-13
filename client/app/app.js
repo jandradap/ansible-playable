@@ -20,10 +20,16 @@ import 'ansi-to-html';
 
 import 'angular-markdown-directive';
 
+import 'ng-tags-input';
+
+import 'angular-loading-bar';
+
 import treecontrol from 'angular-tree-control';
 
 import 'angular-tree-control/css/tree-control-attribute.css';
 import 'angular-tree-control/css/tree-control.css';
+
+import 'ng-tags-input/build/ng-tags-input.min.css';
 
 import {
   routeConfig
@@ -102,7 +108,7 @@ angular.module('app2App', [ngCookies, ngResource, ngSanitize, uiRouter, uiBootst
   // Filters
   dictToKeyValueArray, dictToKeyValueArraySimple, keyValueArrayToDict, keyValueArrayToArray, addDotInKey, removeDotInKey, json2yaml,
   // Directives
-  complexVar, tasks, treecontrol, 'btford.markdown'
+  complexVar, tasks, treecontrol, 'btford.markdown', 'ngTagsInput', 'angular-loading-bar'
 
 ])
   .config(routeConfig)

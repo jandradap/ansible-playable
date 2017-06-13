@@ -1,47 +1,56 @@
 <div style="padding:15px;">
   <div class="row">
     <div class="col-md-2">
-      <div class="panel">
+      <select class="form-control" ng-model="selectedProjectID" ng-change="projectSelected(selectedProjectID)" ng-options="project._id as project.name for project in projects">
+      </select>
+      <div ng-if="selectedProject.ansibleVersion" class="hint">
+        Ansible Version:{{selectedProject.ansibleVersion}}
+      </div>
+
+      <br>
+      <select class="form-control" ng-model="selectedInventoryFileName" ng-options="inventoryFile as inventoryFile for inventoryFile in inventoryFiles" ng-change="inventoryFileSelected(selectedInventoryFileName)">
+      </select>
+      <div ng-if="selectedProject.ansibleVersion" class="hint">
+        An inventory file to work with
+      </div>
+
+
+      <br>
+      <div class="btn-group-vertical" style="width:100%"  role="group" aria-label="...">
+        <button class="btn btn-default" ui-sref="designer.inventory">Inventory</button>
+        <button class="btn btn-default" ui-sref="designer.playbook">Playbooks</button>
+        <button class="btn btn-default" ui-sref="designer.roles">Roles</button>
+        <button class="btn btn-default" ui-sref="designer.file_browser">File Browser</button>
+      </div>
+
+      <!--<div class="panel">
         <div class="panel panel-default">
           <div class="panel-heading">Projects</div>
           <div class="panel-body">
-            <select class="form-control" ng-model="selectedProjectID" ng-change="projectSelected(selectedProjectID)" ng-options="project._id as project.name for project in projects">
-            </select>
-            <div ng-if="selectedProject.ansibleVersion" class="hint">
-              Ansible Version:{{selectedProject.ansibleVersion}}
-            </div>
+
           </div>
         </div>
       </div>
-
-      <div class="panel">
+-->
+      <!--<div class="panel">
         <div class="panel panel-default">
           <div class="panel-heading">Inventory Files</div>
           <div class="panel-body">
-            <select class="form-control" ng-model="selectedInventoryFileName" ng-options="inventoryFile as inventoryFile for inventoryFile in inventoryFiles" ng-change="inventoryFileSelected(selectedInventoryFileName)">
-            </select>
-            <div ng-if="selectedProject.ansibleVersion" class="hint">
-              An inventory file to work with
-            </div>
+
           </div>
         </div>
-      </div>
+      </div>-->
 
-      <div class="panel">
+      <!--<div class="panel">
         <div class="panel panel-default">
           <div class="panel-heading">Menu</div>
           <div class="panel-body">
 
-            <div class="btn-group-vertical" role="group" aria-label="...">
-              <button class="btn btn-default" ui-sref="designer.inventory">Inventory</button>
-              <button class="btn btn-default" ui-sref="designer.playbook">Playbooks</button>
-              <button class="btn btn-default" ui-sref="designer.roles">Roles</button>
-              <button class="btn btn-default" ui-sref="designer.file_browser">File Browser</button>
-            </div>
+
 
           </div>
         </div>
-      </div>
+      </div>-->
       <div class="alert alert-danger" ng-if="err_msg">{{err_msg}}</div>
     </div>
 

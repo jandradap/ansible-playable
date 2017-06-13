@@ -55,8 +55,9 @@ export function newTaskController($window, $scope, $sce, $uibModal, ansi2html, a
         selectedTask = angular.copy(selectedTask);
         $scope.newTask = selectedTask;
         if(selectedTask.tags)$scope.newTask.tags = $scope.newTask.tags.join(',');
-        var module = $scope.getModuleFromTask(selectedTask);
-        $scope.getModuleDescription(module,true)
+        $scope.getModuleFromTask(selectedTask, module => {
+          $scope.getModuleDescription(module,true)
+        });
       }
 
     }, function(response){
@@ -180,66 +181,68 @@ export function newTaskController($window, $scope, $sce, $uibModal, ansi2html, a
    * @param task - Single task object containing task properties
    * @returns {{}}
    */
-  $scope.getModuleFromTask = function(task){
+  $scope.getModuleFromTask = function(task, successCallback){
     var moduleObject = {};
     $scope.local_action = false;
     var task_properties = null;
 
-    var module =  ansible.getModuleFromTask(task);
-
-    if(module === 'include'){
-      module = null;
-      task.tags = task.include.replace(/.*tags=(.*)/,"$1")
-      return;
-    }else if(module === 'local_action'){
-      $scope.local_action = true;
-      module = task.local_action.module;
-      task_properties = task.local_action;
-      delete task_properties.module;
-    }else{
-      task_properties = task[module];
-    }
-
-    angular.forEach($scope.modules, function(item,index) {
-      if(item.name == module){
-        moduleObject = item;
-        $scope.newTask.module = item;
+    ansible.getModuleFromTask(task, module => {
+      if(module === 'include'){
+        module = null;
+        task.tags = task.include.replace(/.*tags=(.*)/,"$1")
+        return;
+      }else if(module === 'local_action'){
+        $scope.local_action = true;
+        module = task.local_action.module;
+        task_properties = task.local_action;
+        delete task_properties.module;
+      }else{
+        task_properties = task[module];
       }
+
+      angular.forEach($scope.modules, function(item,index) {
+        if(item.name == module){
+          moduleObject = item;
+          $scope.newTask.module = item;
+        }
+      });
+
+
+      if(!(moduleObject && moduleObject.name)){
+        $scope.err_msg = "Unable to find module " + module + " in Ansible controller";
+        return
+      }
+
+      //moduleObject.name = module;
+      moduleObject.variables = [];
+      if(typeof task_properties == "string"){
+        moduleObject.variables.push({'name':'free_form','value':task_properties});
+
+        var re = /\b(\w+)=\s*([^=]*\S)\b\s*(?=\w+=|$)/g;
+        var m;
+
+        while ((m = re.exec(task_properties)) !== null) {
+          if (m.index === re.lastIndex) {
+            re.lastIndex++;
+          }
+          // View your result using the m-variable.
+          // eg m[0] etc.
+          var k=m[1];
+          var v=m[2];
+          moduleObject.variables.push({'name':k,'value':v})
+        }
+
+      }else if(typeof task_properties == "object"){
+
+        angular.forEach(task_properties,function(value,key){
+          this.push({'name':key,'value':value,'complexValue':value})
+        },moduleObject.variables)
+
+      }
+      successCallback(moduleObject);
     });
 
 
-    if(!(moduleObject && moduleObject.name)){
-      $scope.err_msg = "Unable to find module " + module + " in Ansible controller";
-      return
-    }
-
-    //moduleObject.name = module;
-    moduleObject.variables = [];
-    if(typeof task_properties == "string"){
-      moduleObject.variables.push({'name':'free_form','value':task_properties});
-
-      var re = /\b(\w+)=\s*([^=]*\S)\b\s*(?=\w+=|$)/g;
-      var m;
-
-      while ((m = re.exec(task_properties)) !== null) {
-        if (m.index === re.lastIndex) {
-          re.lastIndex++;
-        }
-        // View your result using the m-variable.
-        // eg m[0] etc.
-        var k=m[1];
-        var v=m[2];
-        moduleObject.variables.push({'name':k,'value':v})
-      }
-
-    }else if(typeof task_properties == "object"){
-
-      angular.forEach(task_properties,function(value,key){
-        this.push({'name':key,'value':value,'complexValue':value})
-      },moduleObject.variables)
-
-    }
-    return moduleObject
 
   };
 

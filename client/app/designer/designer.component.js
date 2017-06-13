@@ -35,6 +35,8 @@ export class DesignerComponent {
         Projects.selectedProject = $scope.selectedProject;
         $scope.listOfInventoryFiles();
         $scope.$broadcast('projectLoaded');
+        // Refresh modules list on project load
+        ansible.getAnsibleModules();
       })
 
     };

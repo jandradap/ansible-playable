@@ -13,7 +13,12 @@
       <td><input type="checkbox" ng-model="tasksMetaData[$index].selected">
       </td>
       <td>{{tasksMetaData[$index].taskName}}</td>
-      <td>{{tasksMetaData[$index].taskModule}}</td>
+      <td ng-if="tasksMetaData[$index].taskModule">
+        {{tasksMetaData[$index].taskModule}}
+      </td>
+      <td ng-if="!tasksMetaData[$index].taskModule" class="warning" uib-tooltip="The module could not be identified. This may be because the module used in this task is not available in the Ansible Host. Run 'ansible-doc -l' to see if the module is available on the host">
+        <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Unidentified
+      </td>
       <td>
         <div class="btn-group">
           <label class="btn btn-default btn-sm" ng-click="showTaskModal($index)"><span

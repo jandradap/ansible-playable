@@ -27,14 +27,15 @@ export default angular.module('webAppApp.tasks', [])
           scope.tasksMetaData = [];
 
           angular.forEach(scope.tasksList,function(task){
-            var taskModule = ansible.getModuleFromTask(task);
-            var taskName = task.name;
+            ansible.getModuleFromTask(task, taskModule => {
+              var taskName = task.name;
 
-            if(taskModule === 'include'){
-              taskName = task[taskModule].replace(/(.*yml) .*/,"$1")
-            }
+              if(taskModule === 'include'){
+                taskName = task[taskModule].replace(/(.*yml) .*/,"$1")
+              }
 
-            scope.tasksMetaData.push({taskModule:taskModule,taskName:taskName,selected:false})
+              scope.tasksMetaData.push({taskModule:taskModule,taskName:taskName,selected:false})
+            });
           })
 
         },true);

@@ -574,7 +574,7 @@ exports.getRoleFiles = function(roleName, successCallback, errorCallback, ansibl
 
   scp2_exec.copyFileToScriptEngine('./helpers/dir_tree.py','/tmp/dir_tree.py',ansibleEngine,function(){
     ssh2_exec.executeCommand(command,null,successCallback,errorCallback,ansibleEngine);
-  }. errorCallback);
+  }, errorCallback);
 
 };
 
