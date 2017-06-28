@@ -105,7 +105,13 @@ export function show(req, res) {
   var command = 'cat "' + ansibleEngine.customModules + '"/' + req.params.custom_module;
 
   if(req.params.custom_module === 'template.py'){
-    command = 'cat ' + '/opt/ehc-builder-scripts/ansible_modules/template.py';
+    //command = 'cat ' + '/opt/ehc-builder-scripts/ansible_modules/template.py';
+
+    return require('fs').readFile('./helpers/module_template.py', (err, data) => {
+      if (err) res.status(500).send(data);
+      res.send(data);
+    });
+
   }
 
 
@@ -137,20 +143,27 @@ export function testModule(req, res) {
     res.status(500).send("Custom Modules Folder not defined in Ansible Engine")
   }
 
-  var command = '/opt/ansible/ansible-devel/hacking/test-module -m "' + ansibleEngine.customModules + '/' + req.params.custom_module + "\" -a '" + JSON.stringify(moduleArgs) + "'";
+  var test_module = '/tmp/test-module';
 
-  console.log("Command=" + command);
+  var command = 'chmod 755 ' + test_module + '; ' + test_module + ' -m "' + ansibleEngine.customModules + '/' + req.params.custom_module + "\" -a '" + JSON.stringify(moduleArgs) + "'";
 
-  ssh2_exec.executeCommand(command,
-    null,
-    function(data){
-      res.send(data);
-    },
-    function(data){
-      res.status(500).send(data)
-    },
-    ansibleEngine
-  );
+  scp2_exec.copyFileToScriptEngine('./helpers/test-module',test_module,ansibleEngine,function(){
+    console.log("Command=" + command);
+
+    ssh2_exec.executeCommand(command,
+      null,
+      function(data){
+        res.send(data);
+      },
+      function(data){
+        res.status(500).send(data)
+      },
+      ansibleEngine
+    );
+  }, function(errorResponse){
+    res.status(500).send(errorResponse)
+  });
+
 
   /*return CustomModule.findById(req.params.custom_module).exec()
    .then(handleEntityNotFound(res))

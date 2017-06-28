@@ -36,26 +36,26 @@ describe('CustomModule API Router:', function() {
     expect(customModuleIndex).to.equal(routerStub);
   });
 
-  describe('GET /api/custom_modules', function() {
+  describe('GET /api/custom_modules/query', function() {
     it('should route to customModule.controller.index', function() {
-      expect(routerStub.get
-        .withArgs('/', 'customModuleCtrl.index')
+      expect(routerStub.post
+        .withArgs('/query', 'customModuleCtrl.index')
         ).to.have.been.calledOnce;
     });
   });
 
-  describe('GET /api/custom_modules/:id', function() {
+  describe('GET /api/custom_modules/:custom_module/get', function() {
     it('should route to customModule.controller.show', function() {
-      expect(routerStub.get
-        .withArgs('/:id', 'customModuleCtrl.show')
+      expect(routerStub.post
+        .withArgs('/:custom_module/get', 'customModuleCtrl.show')
         ).to.have.been.calledOnce;
     });
   });
 
-  describe('POST /api/custom_modules', function() {
+  describe('POST /api/custom_modules/:custom_module', function() {
     it('should route to customModule.controller.create', function() {
       expect(routerStub.post
-        .withArgs('/', 'customModuleCtrl.create')
+        .withArgs('/:custom_module', 'customModuleCtrl.create')
         ).to.have.been.calledOnce;
     });
   });
