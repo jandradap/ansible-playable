@@ -57,6 +57,8 @@ COPY ./ /data/web-app
 USER root
 RUN chown -R app_user /data/web-app
 
-ENTRYPOINT gulp serve
-
 COPY helpers/module_template.py /opt/ehc-builder-scripts/ansible_modules/template.py
+
+ENTRYPOINT service ssh start && gulp serve
+
+
