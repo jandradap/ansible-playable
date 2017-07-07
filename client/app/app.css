@@ -51,7 +51,15 @@
 /* Component styles are injected through gulp */
 /* inject:css */
 @import 'admin/admin.css';
+@import 'designer/designer.css';
+@import 'designer/inventory/inventory.css';
+@import 'designer/playbook/playbook.css';
+@import 'designer/roles/roles.css';
+@import 'designer/tasks/tasks.css';
+@import 'directives/complexVar/complexVar.css';
 @import 'main/main.css';
+@import 'project/project.css';
+@import 'runs/runs.css';
 @import '../components/footer/footer.css';
 @import '../components/modal/modal.css';
 @import '../components/oauth-buttons/oauth-buttons.css';

@@ -8,7 +8,7 @@ export function customModulesService($http,Projects) {
   var uri = '/api/custom_modules';
 
   this.get = function(successCallback,errorCallback){
-    $http.post(uri + '/query',{ansibleEngine:Projects.selectedProject.ansibleEngine}).then(successCallback,errorCallback)
+    $http.post(uri + '/list',{ansibleEngine:Projects.selectedProject.ansibleEngine}).then(successCallback,errorCallback)
   };
 
   this.show = function(customModule,successCallback,errorCallback){

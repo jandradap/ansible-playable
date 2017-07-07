@@ -56,7 +56,7 @@ export function ansibleService($http, YAML, Projects) {
 
     AnsibleService.cmd_buffer.push(Projects.selectedProject.ansibleEngine.ansibleHost);
 
-    $http.post(uri + 'modules', {ansibleEngine: Projects.selectedProject.ansibleEngine}).then(function (response) {
+    $http.post(uri + 'modules/list', {ansibleEngine: Projects.selectedProject.ansibleEngine}).then(function (response) {
       var result = response.data.split('\n');
       AnsibleService.modules[Projects.selectedProject.ansibleEngine.ansibleHost] = result.map(function (item) {
         return {"name": item.split(" ")[0], "description": item.split(/ (.+)?/)[1]}
@@ -130,7 +130,7 @@ export function ansibleService($http, YAML, Projects) {
   };
 
   this.query = function (successCallback, errorCallback) {
-    $http.get(uri).then(successCallback, errorCallback);
+    $http.get(uri + 'runs').then(successCallback, errorCallback);
   };
 
   this.getModuleFromTask = function (task, successCallback, errorCallback) {
