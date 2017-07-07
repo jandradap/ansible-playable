@@ -10,6 +10,20 @@ RUN apt-get update && \
     easy_install pip && \
     pip install ansible
 
+# -----------------------------------------------------------
+
+# Install MongoDB
+# 1. Import the public key
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6
+
+# 2. Add source info
+RUN echo "deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.4 main" | tee /etc/apt/sources.list.d/mongodb-org-3.4.list
+
+# 3. Update apt and install MongoDB
+RUN apt-get update && apt-get install -y mongodb-org
+
+# -----------------------------------------------------------
+
 # TO fix a bug
 RUN mkdir -p /root/.config/configstore && chmod g+rwx /root /root/.config /root/.config/configstore
 RUN useradd -u 1003 -d /home/app_user -m -s /bin/bash -p $(echo P@ssw0rd@123 | openssl passwd -1 -stdin) app_user
@@ -57,8 +71,10 @@ COPY ./ /data/web-app
 USER root
 RUN chown -R app_user /data/web-app
 
-COPY helpers/module_template.py /opt/ehc-builder-scripts/ansible_modules/template.py
+RUN mkdir -p /data/db
 
-ENTRYPOINT service ssh start && gulp serve
+ENV DOMAIN='http://ansible-playable.com'
+
+ENTRYPOINT service ssh start && mongod & gulp serve:dist
 
 
