@@ -104,8 +104,11 @@ export function changePassword(req, res) {
 export function me(req, res, next) {
   var userId = req.user._id;
 
+  console.log("Find User =" + JSON.stringify(req.user));
+
   return User.findOne({ _id: userId }, '-salt -password').exec()
     .then(user => { // don't ever give out the password or salt
+      console.log("User =" + JSON.stringify(user));
       if(!user) {
         return res.status(401).end();
       }

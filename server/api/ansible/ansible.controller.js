@@ -86,7 +86,11 @@ export function command(req, res) {
   )
 }
 
-// Creates a new Ansible in the DB
+/**
+ * List Ansible Modules
+ * @param req
+ * @param res
+ */
 export function modules(req, res) {
 
   var ansibleEngine = req.body.ansibleEngine;
@@ -108,6 +112,7 @@ export function modules(req, res) {
 
 // Gets a single Deploy from the DB
 export function getLogs(req, res) {
+  console.log("Param ID " + req.params.id);
   return Ansible.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
     .then(function(entity){
@@ -169,6 +174,7 @@ export function execute(req, res) {
 
   var resultSent = false;
 
+  // Execute Ansible Playbook and return immediately with a new Job (Ansible) object
   ansibleTool.executeAnsible(logfilename, project_folder, playbook_name, inventory_file_name, tags_joined, limit_to_hosts_joined, verbose,check_mode,
     function(data){
       //res.write(data)
@@ -244,6 +250,7 @@ export function playbook_create(req, res) {
     function(data){
       //res.write(data);
       //res.end()
+      console.log("data = " + data);
       if(!resultSent){
         resultSent = true;
         res.send(data)
@@ -251,6 +258,7 @@ export function playbook_create(req, res) {
     },
     function(data){
       //res.write(data)
+      console.log("data = " + data);
       if(!resultSent){
         resultSent = true;
         res.status(500).send(data)

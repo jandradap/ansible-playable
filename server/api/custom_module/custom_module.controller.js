@@ -93,43 +93,38 @@ export function index(req, res) {
    .catch(handleError(res));*/
 }
 
-// Gets a single CustomModule from the DB
+// Gets a single CustomModule or a module_template from DB
 export function show(req, res) {
   console.log("Show " + req.params.custom_module);
   var ansibleEngine = req.body.ansibleEngine;
 
   if(!ansibleEngine.customModules){
-    res.status(500).send("Custom Modules Folder not defined in Ansible Engine")
+    return res.status(500).send("Custom Modules Folder not defined in Ansible Engine")
   }
 
   var command = 'cat "' + ansibleEngine.customModules + '"/' + req.params.custom_module;
 
+  // If request is for module template, return module_template from default path
   if(req.params.custom_module === 'template.py'){
-    //command = 'cat ' + '/opt/ehc-builder-scripts/ansible_modules/template.py';
 
     return require('fs').readFile('./helpers/module_template.py', (err, data) => {
-      if (err) res.status(500).send(data);
+      if (err) return res.status(500).send(data);
       res.send(data);
     });
 
+  }else{
+    ssh2_exec.executeCommand(command,
+      null,
+      function(data){
+        res.send(data);
+      },
+      function(data){
+        res.status(500).send(data)
+      },
+      ansibleEngine
+    );
   }
 
-
-  ssh2_exec.executeCommand(command,
-    null,
-    function(data){
-      res.send(data);
-    },
-    function(data){
-      res.status(500).send(data)
-    },
-    ansibleEngine
-  );
-
-  /*return CustomModule.findById(req.params.custom_module).exec()
-   .then(handleEntityNotFound(res))
-   .then(respondWithResult(res))
-   .catch(handleError(res));*/
 }
 
 // Test Module
@@ -145,7 +140,7 @@ export function testModule(req, res) {
 
   var test_module = '/tmp/test-module';
 
-  var command = 'chmod 755 ' + test_module + '; ' + test_module + ' -m "' + ansibleEngine.customModules + '/' + req.params.custom_module + "\" -a '" + JSON.stringify(moduleArgs) + "'";
+  var command = 'chmod 755 ' + test_module + '; python ' + test_module + ' -m "' + ansibleEngine.customModules + '/' + req.params.custom_module + "\" -a '" + JSON.stringify(moduleArgs) + "'";
 
   scp2_exec.copyFileToScriptEngine('./helpers/test-module',test_module,ansibleEngine,function(){
     console.log("Command=" + command);
@@ -173,8 +168,6 @@ export function testModule(req, res) {
 
 // Creates a new CustomModule in the DB
 export function create(req, res) {
-
-  console.log("Create");
 
   var custom_module_name =  req.params.custom_module;
   var custom_module_code =  req.body.custom_module_code;

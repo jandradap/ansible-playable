@@ -36,10 +36,10 @@ describe('CustomModule API Router:', function() {
     expect(customModuleIndex).to.equal(routerStub);
   });
 
-  describe('GET /api/custom_modules/query', function() {
+  describe('GET /api/custom_modules/list', function() {
     it('should route to customModule.controller.index', function() {
       expect(routerStub.post
-        .withArgs('/query', 'customModuleCtrl.index')
+        .withArgs('/list', 'customModuleCtrl.index')
         ).to.have.been.calledOnce;
     });
   });

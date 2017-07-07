@@ -10,7 +10,15 @@ var ansibleCtrlStub = {
   create: 'ansibleCtrl.create',
   upsert: 'ansibleCtrl.upsert',
   patch: 'ansibleCtrl.patch',
-  destroy: 'ansibleCtrl.destroy'
+  destroy: 'ansibleCtrl.destroy',
+  modules: 'ansibleCtrl.modules',
+  command: 'ansibleCtrl.command',
+  execute: 'ansibleCtrl.execute',
+  project_files: 'ansibleCtrl.project_files',
+  playbook_get: 'ansibleCtrl.playbook_get',
+  playbook_create: 'ansibleCtrl.playbook_create',
+  playbook_delete: 'ansibleCtrl.playbook_delete',
+  playbook_list: 'ansibleCtrl.playbook_list',
 };
 
 var routerStub = {
@@ -18,7 +26,15 @@ var routerStub = {
   put: sinon.spy(),
   patch: sinon.spy(),
   post: sinon.spy(),
-  delete: sinon.spy()
+  delete: sinon.spy(),
+  modules: sinon.spy(),
+  command: sinon.spy(),
+  execute: sinon.spy(),
+  project_files: sinon.spy(),
+  playbook_get: sinon.spy(),
+  playbook_create: sinon.spy(),
+  playbook_delete: sinon.spy(),
+  playbook_list: sinon.spy()
 };
 
 // require the index with our stubbed out modules
@@ -36,51 +52,70 @@ describe('Ansible API Router:', function() {
     expect(ansibleIndex).to.equal(routerStub);
   });
 
-  describe('GET /api/ansible', function() {
-    it('should route to ansible.controller.index', function() {
-      expect(routerStub.get
-        .withArgs('/', 'ansibleCtrl.index')
-        ).to.have.been.calledOnce;
-    });
-  });
-
-  describe('GET /api/ansible/:id', function() {
-    it('should route to ansible.controller.show', function() {
-      expect(routerStub.get
-        .withArgs('/:id', 'ansibleCtrl.show')
-        ).to.have.been.calledOnce;
-    });
-  });
-
-  describe('POST /api/ansible', function() {
-    it('should route to ansible.controller.create', function() {
+  describe('POST /api/ansible/modules/list', function() {
+    it('should route to ansible.controller.modules', function() {
       expect(routerStub.post
-        .withArgs('/', 'ansibleCtrl.create')
+        .withArgs('/modules/list', 'ansibleCtrl.modules')
         ).to.have.been.calledOnce;
     });
   });
 
-  describe('PUT /api/ansible/:id', function() {
-    it('should route to ansible.controller.upsert', function() {
-      expect(routerStub.put
-        .withArgs('/:id', 'ansibleCtrl.upsert')
-        ).to.have.been.calledOnce;
+  describe('POST /api/ansible/command', function() {
+    it('should route to ansible.controller.command', function() {
+      expect(routerStub.post
+        .withArgs('/command', 'ansibleCtrl.command')
+      ).to.have.been.calledOnce;
     });
   });
 
-  describe('PATCH /api/ansible/:id', function() {
-    it('should route to ansible.controller.patch', function() {
-      expect(routerStub.patch
-        .withArgs('/:id', 'ansibleCtrl.patch')
-        ).to.have.been.calledOnce;
+  describe('POST /api/ansible/execute', function() {
+    it('should route to ansible.controller.execute', function() {
+      expect(routerStub.post
+        .withArgs('/execute', 'ansibleCtrl.execute')
+      ).to.have.been.calledOnce;
     });
   });
 
-  describe('DELETE /api/ansible/:id', function() {
-    it('should route to ansible.controller.destroy', function() {
-      expect(routerStub.delete
-        .withArgs('/:id', 'ansibleCtrl.destroy')
-        ).to.have.been.calledOnce;
+  describe('POST /api/ansible/project/files', function() {
+    it('should route to ansible.controller.project_files', function() {
+      expect(routerStub.post
+        .withArgs('/project/files', 'ansibleCtrl.project_files')
+      ).to.have.been.calledOnce;
     });
   });
+
+  describe('POST /api/ansible/playbook/get', function() {
+    it('should route to ansible.controller.playbook_get', function() {
+      expect(routerStub.post
+        .withArgs('/playbook/get', 'ansibleCtrl.playbook_get')
+      ).to.have.been.calledOnce;
+    });
+  });
+
+  describe('POST /api/ansible/playbook/create', function() {
+    it('should route to ansible.controller.playbook_create', function() {
+      expect(routerStub.post
+        .withArgs('/playbook/create', 'ansibleCtrl.playbook_create')
+      ).to.have.been.calledOnce;
+    });
+  });
+
+  describe('POST /api/ansible/playbook/delete', function() {
+    it('should route to ansible.controller.playbook_delete', function() {
+      expect(routerStub.post
+        .withArgs('/playbook/delete', 'ansibleCtrl.playbook_delete')
+      ).to.have.been.calledOnce;
+    });
+  });
+
+  describe('POST /api/ansible/playbook/list', function() {
+    it('should route to ansible.controller.playbook_list', function() {
+      expect(routerStub.post
+        .withArgs('/playbook/list', 'ansibleCtrl.playbook_list')
+      ).to.have.been.calledOnce;
+    });
+  });
+
+  //TODO: Add the remaining test cases here
+
 });

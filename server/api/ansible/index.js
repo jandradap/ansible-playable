@@ -5,9 +5,22 @@ var controller = require('./ansible.controller');
 
 var router = express.Router();
 
-router.get('/', controller.index);
+// List, create and get Ansible Jobs
+router.get('/runs', controller.index);
+router.get('/:id', controller.show);
+router.post('/', controller.create);
+router.put('/:id', controller.upsert);
+router.patch('/:id', controller.patch);
+router.delete('/:id', controller.destroy);
 
-router.post('/modules', controller.modules);
+// Ansible Command line APIs
+// - Create and modify inventory files
+// - Create and modify playbooks
+// - Create and modify roles
+// - List tags
+// - Create and modify files
+// - Create and modify Var files
+router.post('/modules/list', controller.modules);
 router.post('/command', controller.command);
 router.post('/execute', controller.execute);
 
@@ -50,10 +63,5 @@ router.post('/vars/roles/get', controller.get_roles_vars);
 
 router.get('/logs/:id', controller.getLogs);
 
-router.get('/:id', controller.show);
-router.post('/', controller.create);
-router.put('/:id', controller.upsert);
-router.patch('/:id', controller.patch);
-router.delete('/:id', controller.destroy);
 
 module.exports = router;

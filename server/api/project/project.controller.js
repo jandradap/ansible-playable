@@ -13,6 +13,7 @@
 import jsonpatch from 'fast-json-patch';
 import Project from './project.model';
 import config from '../../config/environment';
+const util = require('util');
 var ansibleTool = require('../../components/ansible/ansible_tool');
 
 function respondWithResult(res, statusCode) {
@@ -50,6 +51,7 @@ function removeEntity(res) {
 }
 
 function handleEntityNotFound(res) {
+  console.log("Entity Not Found");
   return function(entity) {
     if(!entity) {
       res.status(404).end();
@@ -62,6 +64,7 @@ function handleEntityNotFound(res) {
 function handleError(res, statusCode) {
   statusCode = statusCode || 500;
   return function(err) {
+    console.log("ERror " + err);
     res.status(statusCode).send(err);
   };
 }
@@ -93,12 +96,17 @@ export function show(req, res) {
 }
 
 
-// Creates a new Project in the DB
+/**
+ * Create New Project
+ * - If Ansible Engine information is provided use that, else consider localhost as Ansible Engine
+ * - Identify/generate project and library (custom modules location)
+ * - Get Ansible version and create projects folder
+ * @param req
+ * @param res
+ */
 export function create(req, res) {
 
   var ansibleEngine = req.body.ansibleEngine;
-
-  console.log("Ansible Engine " + JSON.stringify(ansibleEngine));
 
   req.body.owner_id = req.user._id;
   req.body.owner_name = req.user.name;
@@ -118,18 +126,22 @@ export function create(req, res) {
     };
   }
 
-
+  // If projectFolder is not passed, create a custom project folder
   if(!ansibleEngine.projectFolder){
-    ansibleEngine.projectFolder = '/opt/ansible-projects/' + req.user._id + '_' + req.body.name;
-    ansibleEngine.customModules = '/opt/ansible-projects/' + req.user._id + '_' + req.body.name + '/library';
+    let projectFolderName = util.format('%s_%s',req.user._id, req.body.name);
+
+    ansibleEngine.projectFolder = util.format('/opt/ansible-projects/test_%s', projectFolderName);
+    ansibleEngine.customModules = util.format('/opt/ansible-projects/test_%s/library', projectFolderName);
 
     // Update project request body to save in db
     req.body.ansibleEngine.projectFolder = ansibleEngine.projectFolder;
     req.body.ansibleEngine.customModules = ansibleEngine.customModules;
+    req.body.ansibleEngine.projectFolderName = projectFolderName;
 
   }
 
-
+  // Allow creating project if no host is passed. Then use the default Ansible Engine for all operations.
+  // If Ansible host is passed get Ansible version and create project folder
   if(ansibleEngine.ansibleHost){
     ansibleTool.getAnsibleVersion(
       function(version){
@@ -184,10 +196,16 @@ export function patch(req, res) {
     .catch(handleError(res));
 }
 
+
+
 // Deletes a Project from the DB
 export function destroy(req, res) {
   return Project.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
+    .then(function(entity){
+      if(!entity)return null;
+      return ansibleTool.deleteProjectFolder(entity);
+    })
     .then(removeEntity(res))
     .catch(handleError(res));
 }

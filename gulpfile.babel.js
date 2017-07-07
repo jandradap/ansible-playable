@@ -371,7 +371,9 @@ gulp.task('serve:dist', cb => {
 });
 
 gulp.task('test', cb => {
-    return runSequence('test:server', 'test:client', cb);
+    //return runSequence('test:server', 'test:client', cb);
+    //TODO: Integrate client side tests
+    return runSequence('test:server', cb);
 });
 
 gulp.task('test:server', cb => {
@@ -391,6 +393,11 @@ gulp.task('mocha:unit', () => {
 gulp.task('mocha:integration', () => {
     return gulp.src(paths.server.test.integration)
         .pipe(mocha());
+});
+
+gulp.task('mocha:integration:one', () => {
+  return gulp.src([`${serverPath}/**/custom_module.integration.js`, 'mocha.global.js'])
+    .pipe(mocha());
 });
 
 gulp.task('test:server:coverage', cb => {

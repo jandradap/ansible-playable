@@ -5,7 +5,7 @@ var controller = require('./custom_module.controller');
 
 var router = express.Router();
 
-router.post('/query', controller.index);
+router.post('/list', controller.index);
 router.post('/:custom_module/test', controller.testModule);
 router.post('/:custom_module/get', controller.show);
 router.post('/:custom_module', controller.create);
