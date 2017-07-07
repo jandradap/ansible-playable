@@ -13,7 +13,6 @@ export default function(app) {
   app.use('/api/custom_modules', auth.isAuthenticated(), require('./api/custom_module'));
   app.use('/api/ansible', auth.isAuthenticated(), require('./api/ansible'));
   app.use('/api/projects', auth.isAuthenticated(), require('./api/project'));
-  app.use('/api/things', require('./api/thing'));
   app.use('/api/users', require('./api/user'));
 
   app.use('/auth', require('./auth').default);
