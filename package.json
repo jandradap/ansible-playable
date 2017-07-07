@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "main": "server/index.js",
   "dependencies": {
+    "Q": "0.0.1",
     "ace-builds": "^1.2.6",
     "angular": "~1.6.0",
     "angular-animate": "~1.6.0",
@@ -51,6 +52,7 @@
     "passport-facebook": "^2.0.0",
     "passport-google-oauth20": "^1.0.0",
     "passport-local": "^1.0.0",
+    "q": "^1.5.0",
     "scp2": "^0.5.0",
     "serve-favicon": "^2.3.0",
     "showdown": "^0.3.1",

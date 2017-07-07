@@ -1,9 +1,19 @@
 var ssh2_exec = require('../ssh/ssh2_exec');
 var scp2_exec = require('../scp/scp_exec');
 var config =  require('../../config/environment');
+const util = require('util');
+const Q = require("q");
 
-var local_logPath = 'logs/ansible/execute/'
+const all_commands = require('../../config/commands');
 
+var local_logPath = 'logs/ansible/execute/';
+
+/**
+ * Get Logs
+ * @param logfilename
+ * @param successCallback
+ * @param errorCallback
+ */
 exports.getLogs = function(logfilename,successCallback,errorCallback){
   var logFile = local_logPath + logfilename;
   var fs = require('fs');
@@ -17,13 +27,21 @@ exports.getLogs = function(logfilename,successCallback,errorCallback){
   });
 };
 
-
+/**
+ * Get Modules including any custom modules for this project.
+ * Set ANSIBLE_LIBRARY path to custom modules path for this purpose
+ * @param dataCallback
+ * @param successCallback
+ * @param errorCallback
+ * @param ansibleEngine
+ */
 exports.getModules = function(dataCallback, successCallback,errorCallback, ansibleEngine){
 
-  var command = 'ansible-doc -l';
+  var command = all_commands.ansible.doc;
 
   if(ansibleEngine.customModules){
-    command = 'export ANSIBLE_LIBRARY="' + ansibleEngine.customModules + '"; ' + command;
+    //command = 'export ANSIBLE_LIBRARY="' + ansibleEngine.customModules + '"; ' + command;
+    command = util.format(all_commands.ansible.export_ansible_library, ansibleEngine.customModules) + command;
   }
 
   ssh2_exec.executeCommand(command,
@@ -38,8 +56,14 @@ exports.getModules = function(dataCallback, successCallback,errorCallback, ansib
   )
 };
 
+/**
+ * Get Ansible Version from Ansible Engine
+ * @param successCallback
+ * @param errorCallback
+ * @param ansibleEngine
+ */
 exports.getAnsibleVersion = function(successCallback,errorCallback, ansibleEngine){
-  var command = 'ansible --version';
+  var command = all_commands.ansible.version;
   var ansibleVersionResult = "";
 
   ssh2_exec.executeCommand(command,
@@ -59,26 +83,30 @@ exports.getAnsibleVersion = function(successCallback,errorCallback, ansibleEngin
   )
 };
 
-
-exports.executeAnsible = function(logfilename,project_folder, playbook_name, inventory_file_name, tags_joined, limit_to_hosts_joined, verbose,check_mode,dataCallback, successCallback,errorCallback,ansibleEngine){
-
-  var fs = require('filendir');
-  var time = new Date().getTime();
-  var logFile = local_logPath + logfilename;
-
-  fs.writeFileSync(logFile,"Executing Ansible Playbook \n\n",{'flag':'a'});
-  fs.writeFileSync(logFile," Completed \n",{'flag':'a'});
-
-  // export ANSIBLE_GATHERING=FALSE;
-  var command= 'export ANSIBLE_FORCE_COLOR=true; export ANSIBLE_HOST_KEY_CHECKING=False; cd "' + project_folder + '";  ansible-playbook "' + playbook_name + '" -i "' + inventory_file_name + '"';
+/**
+ * Get/generate Ansible Command
+ * @param project_folder
+ * @param playbook_name
+ * @param inventory_file_name
+ * @param tags_joined
+ * @param limit_to_hosts_joined
+ * @param verbose
+ * @param check_mode
+ * @param dataCallback
+ * @param successCallback
+ * @param errorCallback
+ * @param ansibleEngine
+ * @returns {string}
+ */
+exports.getAnsibleCommand = function(project_folder, playbook_name, inventory_file_name, tags_joined, limit_to_hosts_joined, verbose,check_mode,dataCallback, successCallback,errorCallback,ansibleEngine){
+  var command = util.format(all_commands.ansible.export_force_color + all_commands.ansible.export_host_key_check + 'cd %s; ' +  all_commands.ansible.playbook , 'true', 'False', project_folder, playbook_name, inventory_file_name)
 
   if(ansibleEngine.customModules){
     command = 'export ANSIBLE_LIBRARY="' + ansibleEngine.customModules + '"; ' + command;
   }
 
   if(tags_joined)
-      command += ' --tags "' + tags_joined + '"';
-    //command += ' --tags "' + tags.join(",") + '"';
+    command += ' --tags "' + tags_joined + '"';
 
   if(limit_to_hosts_joined)
     command += ' --limit "' + limit_to_hosts_joined + '"';
@@ -96,7 +124,35 @@ exports.executeAnsible = function(logfilename,project_folder, playbook_name, inv
 
   console.log("Command= " + command);
 
-  //fs.writeFileSync(logFile,"\n Executing Command =" + command + "\n",{'flag':'a'});
+  return command;
+};
+
+/**
+ * Execute Ansible Playbook
+ * @param logfilename
+ * @param project_folder
+ * @param playbook_name
+ * @param inventory_file_name
+ * @param tags_joined
+ * @param limit_to_hosts_joined
+ * @param verbose
+ * @param check_mode
+ * @param dataCallback
+ * @param successCallback
+ * @param errorCallback
+ * @param ansibleEngine
+ */
+exports.executeAnsible = function(logfilename, project_folder, playbook_name, inventory_file_name, tags_joined, limit_to_hosts_joined, verbose,check_mode,dataCallback, successCallback,errorCallback,ansibleEngine){
+
+  var fs = require('filendir');
+  var time = new Date().getTime();
+  var logFile = local_logPath + logfilename;
+
+  fs.writeFileSync(logFile,"Executing Ansible Playbook \n\n",{'flag':'a'});
+  fs.writeFileSync(logFile," Completed \n",{'flag':'a'});
+
+  var command = exports.getAnsibleCommand(project_folder, playbook_name, inventory_file_name, tags_joined, limit_to_hosts_joined, verbose,check_mode,dataCallback, successCallback,errorCallback,ansibleEngine);
+
   fs.writeFile(logFile,"\n Executing Command =" + command + "\n");
 
   ssh2_exec.executeCommand(command,function(response){
@@ -120,7 +176,16 @@ exports.executeAnsible = function(logfilename,project_folder, playbook_name, inv
 };
 
 
-
+/**
+ * Get Vars
+ * @param project_folder
+ * @param inventory_file_name
+ * @param host_name
+ * @param dataCallback
+ * @param successCallback
+ * @param errorCallback
+ * @param ansibleEngine
+ */
 exports.getVars = function(project_folder, inventory_file_name, host_name, dataCallback, successCallback,errorCallback,ansibleEngine){
 
   var fs = require('filendir');
@@ -145,7 +210,15 @@ exports.getVars = function(project_folder, inventory_file_name, host_name, dataC
 
 };
 
-
+/**
+ * Get Role Vars
+ * @param project_folder
+ * @param role_name
+ * @param dataCallback
+ * @param successCallback
+ * @param errorCallback
+ * @param ansibleEngine
+ */
 exports.getRolesVars = function(project_folder, role_name, dataCallback, successCallback,errorCallback,ansibleEngine){
 
   var AnsibleAPILocation = '/tmp/AnsibleAPI.py';
@@ -167,91 +240,15 @@ exports.getRolesVars = function(project_folder, role_name, dataCallback, success
 
 };
 
-/*
-exports.executeAnsible = function(logfilename,inventory_file_contents,playbook_file_contents,tags,verbose,check_mode,dataCallback, successCallback,errorCallback,ansibleEngine){
 
-  var fs = require('filendir');
-  var time = new Date().getTime();
-  var logFile = local_logPath + logfilename;
-
-  fs.writeFileSync(logFile,"Executing Ansible Playbook \n\n",{'flag':'a'});
-
-  var inventory_file_name = 'inventory_file_' + time + '.ini';
-  var playbook_file_name = 'playbook_file_' + time + '.yml';
-
-  fs.writeFileSync(logFile,"inventory_file_location - " + inventory_file_name +" \n",{'flag':'a'});
-  fs.writeFileSync(logFile,"playbook_file_location  - " + playbook_file_name +" \n\n",{'flag':'a'});
-
-  console.log('inventory_file_name=' + inventory_file_name);
-
-  var inputFilePathOnScriptEngine = config.scriptEngine.inputDirectory + '/inventory/' + inventory_file_name;
-  var playbookFilePathOnScriptEngine = config.scriptEngine.inputDirectory + '/playbooks/' + playbook_file_name;
-
-  fs.writeFileSync(logFile,"Writing inventory file to Script Engine - " + inputFilePathOnScriptEngine +" - ",{'flag':'a'});
-
-  scp2_exec.createFileOnScriptEngine(inventory_file_contents,inputFilePathOnScriptEngine,
-    function(){
-      console.log("Inventory file written");
-      fs.writeFileSync(logFile," Completed \n",{'flag':'a'});
-      fs.writeFileSync(logFile,"Writing playbook file to Script Engine - " + playbookFilePathOnScriptEngine +" - ",{'flag':'a'});
-      scp2_exec.createFileOnScriptEngine(playbook_file_contents,playbookFilePathOnScriptEngine,
-        function(){
-          console.log("Playbook file written");
-          fs.writeFileSync(logFile," Completed \n",{'flag':'a'});
-
-          var command= "export ANSIBLE_HOST_KEY_CHECKING=False;  ansible-playbook --vault-password-file ~/.vault_pass.txt " + playbookFilePathOnScriptEngine + " -i " + inputFilePathOnScriptEngine;
-
-          if(ansibleEngine.customModules){
-            command = 'export ANSIBLE_LIBRARY=' + ansibleEngine.customModules + '; ' + command;
-          }
-
-          if(tags)
-            command += ' --tags "' + tags.join(",") + '"';
-
-          if(verbose === 'verbose_detail'){
-            command += ' -vvv ';
-          }
-          else if(verbose === 'verbose'){
-            command += ' -v ';
-          }
-
-          if(check_mode !== 'No_Check'){
-            command += ' --check ';
-          }
-
-          console.log("Command= " + command);
-
-          fs.writeFileSync(logFile,"\n Executing Command =" + command + "\n",{'flag':'a'});
-
-          ssh2_exec.executeCommand(command,function(response){
-            dataCallback(response);
-            console.log(response);
-            fs.writeFile(logFile,response,{'flag':'a'});
-          },function(response){
-            successCallback(response);
-            console.log(response);
-            fs.writeFile(logFile,response,{'flag':'a'});
-          },function(response){
-            errorCallback(response);
-            console.log(response);
-            fs.writeFile(logFile,response,{'flag':'a'});
-          },ansibleEngine)
-
-        },function(err){
-          errorCallback(err);
-          fs.writeFile(logFile," Failed \n",{'flag':'a'});
-        },ansibleEngine);
-
-    },function(err){
-      errorCallback(err);
-      fs.writeFile(logFile," Failed \n",{'flag':'a'});
-    },ansibleEngine);
-
-};
-*/
-
-
-
+/**
+ * Write File
+ * @param file_path
+ * @param file_contents
+ * @param successCallback
+ * @param errorCallback
+ * @param ansibleEngine
+ */
 exports.writeFile = function(file_path,file_contents, successCallback,errorCallback,ansibleEngine){
 
   scp2_exec.createFileOnScriptEngine(file_contents, file_path,
@@ -263,6 +260,13 @@ exports.writeFile = function(file_path,file_contents, successCallback,errorCallb
 
 };
 
+/**
+ * Delete File
+ * @param file_path
+ * @param successCallback
+ * @param errorCallback
+ * @param ansibleEngine
+ */
 exports.deleteFile = function(file_path,successCallback,errorCallback,ansibleEngine){
 
   var command = 'rm -rf "' + file_path + '"';
@@ -271,6 +275,14 @@ exports.deleteFile = function(file_path,successCallback,errorCallback,ansibleEng
 
 };
 
+/**
+ * Read Contents of a file
+ * @param file_path
+ * @param dataCallback
+ * @param successCallback
+ * @param errorCallback
+ * @param ansibleEngine
+ */
 exports.readFile = function(file_path, dataCallback, successCallback,errorCallback,ansibleEngine){
 
   var command = 'cat "' + file_path + '"';
@@ -279,6 +291,15 @@ exports.readFile = function(file_path, dataCallback, successCallback,errorCallba
 
 };
 
+/**
+ * Write to a Playbook file
+ * @param project_folder
+ * @param playbook_file_name
+ * @param playbook_file_contents
+ * @param successCallback
+ * @param errorCallback
+ * @param ansibleEngine
+ */
 exports.writePlaybook = function(project_folder,playbook_file_name,playbook_file_contents, successCallback,errorCallback,ansibleEngine){
 
   var playbook_file_path = '' + project_folder + '/' + playbook_file_name + '';
@@ -295,7 +316,15 @@ exports.writePlaybook = function(project_folder,playbook_file_name,playbook_file
 
 };
 
-
+/**
+ * Read Playbook file contents
+ * @param project_folder
+ * @param playbook_file_name
+ * @param dataCallback
+ * @param successCallback
+ * @param errorCallback
+ * @param ansibleEngine
+ */
 exports.readPlaybook = function(project_folder,playbook_file_name, dataCallback, successCallback,errorCallback,ansibleEngine){
 
   var playbook_file_path = project_folder + '/' + playbook_file_name;
@@ -305,7 +334,15 @@ exports.readPlaybook = function(project_folder,playbook_file_name, dataCallback,
 
 };
 
-
+/**
+ * Delete Playbook
+ * @param project_folder
+ * @param playbook_file_name
+ * @param dataCallback
+ * @param successCallback
+ * @param errorCallback
+ * @param ansibleEngine
+ */
 exports.deletePlaybook = function(project_folder,playbook_file_name, dataCallback, successCallback,errorCallback,ansibleEngine){
 
   var playbook_file_path = project_folder + '/' + playbook_file_name;
@@ -315,6 +352,13 @@ exports.deletePlaybook = function(project_folder,playbook_file_name, dataCallbac
 
 };
 
+/**
+ * Get Playbook List
+ * @param project_folder
+ * @param successCallback
+ * @param errorCallback
+ * @param ansibleEngine
+ */
 exports.getPlaybookList = function(project_folder, successCallback, errorCallback, ansibleEngine){
 
   var playbook_file_path = project_folder + '/';
@@ -389,6 +433,42 @@ exports.createProjectFolder = function(project_folder, successCallback, errorCal
   },function(){
     errorCallback("Directory - " + project_folder +" already exists. Try a different Project Folder path.")
   },ansibleEngine);
+
+};
+
+/**
+ * Delete Project Folder
+ * @param project
+ */
+exports.deleteProjectFolder = function(project){
+
+  var deferred = Q.defer();
+
+  if(!project){
+    deferred.reject(new Error("Project not found "));
+    return deferred.promise;
+  }
+
+  var ansibleEngine = project.ansibleEngine;
+  var project_folder = ansibleEngine.projectFolder;
+  var archive_folder = '/opt/ansible-projects/archive';
+
+  var command = util.format('mkdir -p %s && tar -cvf %s/%s.tar %s && rm -rf %s', archive_folder, archive_folder, ansibleEngine.projectFolderName, project_folder, project_folder);
+
+  var check_dir_command = '[ -d ' + project_folder + ' ]';
+
+  ssh2_exec.executeCommand(check_dir_command,null,(data) => {
+    ssh2_exec.executeCommand(command,null,
+      (success_response) => {
+        deferred.resolve(project);
+    },(error_response) => {
+        deferred.reject(new Error(error_response));
+    },ansibleEngine);
+  },() => {
+    deferred.reject(new Error("Directory - " + project_folder +" does not exist."));
+  },ansibleEngine);
+
+  return deferred.promise;
 
 };
 
@@ -543,6 +623,16 @@ exports.deleteRole = function(roleName, successCallback, errorCallback, ansibleE
 
 };
 
+/**
+ * Import Role to project
+ * - Handle both import from GIT and import from Galaxy
+ * @param roleType
+ * @param roleNameUri
+ * @param successCallback
+ * @param errorCallback
+ * @param ansibleEngine
+ * @returns {*}
+ */
 exports.importRole = function(roleType, roleNameUri, successCallback, errorCallback, ansibleEngine){
 
   var projectFolder = ansibleEngine.projectFolder;
@@ -623,7 +713,13 @@ exports.getTagList = function(project_folder, playbook_name, inventory_file_name
 
 };
 
-
+/**
+ * Create a file using touch
+ * @param fileAbsolutePath
+ * @param successCallback
+ * @param errorCallback
+ * @param ansibleEngine
+ */
 exports.createFile = function(fileAbsolutePath, successCallback, errorCallback, ansibleEngine){
 
   var projectFolder = ansibleEngine.projectFolder;
@@ -633,6 +729,13 @@ exports.createFile = function(fileAbsolutePath, successCallback, errorCallback, 
 
 };
 
+/**
+ * Get Inventory List
+ * @param project_folder
+ * @param successCallback
+ * @param errorCallback
+ * @param ansibleEngine
+ */
 exports.getInventoryList = function(project_folder, successCallback, errorCallback, ansibleEngine){
 
   var playbook_file_path = project_folder + '/';
@@ -656,6 +759,14 @@ exports.getInventoryList = function(project_folder, successCallback, errorCallba
 
 };
 
+/**
+ * Read Inventory File
+ * @param project_folder
+ * @param inventoryName
+ * @param successCallback
+ * @param errorCallback
+ * @param ansibleEngine
+ */
 exports.readInventoryFile = function(project_folder, inventoryName, successCallback, errorCallback, ansibleEngine){
 
   var playbook_file_path = project_folder + '/';
