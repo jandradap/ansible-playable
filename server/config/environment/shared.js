@@ -1,6 +1,7 @@
 'use strict';
 
 exports = module.exports = {
+  version: 'Alpha',
   // List of user roles
   userRoles: ['guest', 'user', 'admin'],
   'scriptEngine' : {

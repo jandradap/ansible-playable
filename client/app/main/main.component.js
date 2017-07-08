@@ -5,8 +5,10 @@ import routing from './main.routes';
 export class MainController {
 
   /*@ngInject*/
-  constructor($http) {
+  constructor($http, $scope, appConfig) {
+    'ngInject';
     this.$http = $http;
+    $scope.appVersion = appConfig.version;
   }
 }
 
