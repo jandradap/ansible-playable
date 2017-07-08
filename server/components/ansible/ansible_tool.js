@@ -40,7 +40,6 @@ exports.getModules = function(dataCallback, successCallback,errorCallback, ansib
   var command = all_commands.ansible.doc;
 
   if(ansibleEngine.customModules){
-    //command = 'export ANSIBLE_LIBRARY="' + ansibleEngine.customModules + '"; ' + command;
     command = util.format(all_commands.ansible.export_ansible_library, ansibleEngine.customModules) + command;
   }
 
@@ -105,6 +104,7 @@ exports.getAnsibleCommand = function(project_folder, playbook_name, inventory_fi
     command = 'export ANSIBLE_LIBRARY="' + ansibleEngine.customModules + '"; ' + command;
   }
 
+  // Add options to command as necessary
   if(tags_joined)
     command += ' --tags "' + tags_joined + '"';
 
@@ -190,9 +190,9 @@ exports.getVars = function(project_folder, inventory_file_name, host_name, dataC
 
   var fs = require('filendir');
 
-  var AnsibleAPILocation = '/tmp/AnsibleAPI.py';
+  var AnsibleAPILocation = config.paths.ansible_custom_api_remote;
 
-  var command= 'cd "' + project_folder + '";  python "' + AnsibleAPILocation + '" host_vars --inventory_file="' + inventory_file_name + '"';
+  var command = util.format(all_commands.ansible.get_vars, project_folder, AnsibleAPILocation, inventory_file_name);
 
   if(host_name){
     command += ' --host_name ' + host_name;
@@ -204,7 +204,8 @@ exports.getVars = function(project_folder, inventory_file_name, host_name, dataC
 
   console.log("Command= " + command);
 
-  scp2_exec.copyFileToScriptEngine('./helpers/AnsibleAPI.py',AnsibleAPILocation,ansibleEngine,function(){
+  // Copy helper script to Ansible Engine
+  scp2_exec.copyFileToScriptEngine(config.paths.ansible_custom_api_local,AnsibleAPILocation,ansibleEngine,function(){
     ssh2_exec.executeCommand(command,null,successCallback,errorCallback,ansibleEngine);
   }, errorCallback);
 
@@ -221,11 +222,12 @@ exports.getVars = function(project_folder, inventory_file_name, host_name, dataC
  */
 exports.getRolesVars = function(project_folder, role_name, dataCallback, successCallback,errorCallback,ansibleEngine){
 
-  var AnsibleAPILocation = '/tmp/AnsibleAPI.py';
+  var AnsibleAPILocation = + config.paths.ansible_custom_api_remote;
 
-  var project_roles_folder = project_folder + '/roles';
+  var project_roles_folder = project_folder + config.paths.ansible_project_roles;
   var playbook_path = role_name + '/tests/test.yml';
-  var command= 'cd "' + project_roles_folder + '";  python "' + AnsibleAPILocation + '" role_vars --playbook_path="' + playbook_path + '" ';
+
+  var command = util.format(all_commands.ansible.get_role_vars,project_roles_folder, AnsibleAPILocation, playbook_path);
 
   if(ansibleEngine.customModules){
     command = 'export ANSIBLE_LIBRARY="' + ansibleEngine.customModules + '"; ' + command;
@@ -233,7 +235,7 @@ exports.getRolesVars = function(project_folder, role_name, dataCallback, success
 
   console.log("Command= " + command);
 
-  scp2_exec.copyFileToScriptEngine('./helpers/AnsibleAPI.py',AnsibleAPILocation,ansibleEngine,function(){
+  scp2_exec.copyFileToScriptEngine(config.paths.ansible_custom_api_local,AnsibleAPILocation,ansibleEngine,function(){
     ssh2_exec.executeCommand(command,null,successCallback,errorCallback,ansibleEngine);
   }, errorCallback);
 
@@ -269,7 +271,7 @@ exports.writeFile = function(file_path,file_contents, successCallback,errorCallb
  */
 exports.deleteFile = function(file_path,successCallback,errorCallback,ansibleEngine){
 
-  var command = 'rm -rf "' + file_path + '"';
+  var command = util.format(all_commands.general.remove_file, file_path);
 
   ssh2_exec.executeCommand(command,null,successCallback,errorCallback,ansibleEngine)
 
@@ -285,7 +287,7 @@ exports.deleteFile = function(file_path,successCallback,errorCallback,ansibleEng
  */
 exports.readFile = function(file_path, dataCallback, successCallback,errorCallback,ansibleEngine){
 
-  var command = 'cat "' + file_path + '"';
+  var command = util.format(all_commands.general.read_file, file_path);
 
   ssh2_exec.executeCommand(command,null,successCallback,errorCallback,ansibleEngine)
 
@@ -328,7 +330,7 @@ exports.writePlaybook = function(project_folder,playbook_file_name,playbook_file
 exports.readPlaybook = function(project_folder,playbook_file_name, dataCallback, successCallback,errorCallback,ansibleEngine){
 
   var playbook_file_path = project_folder + '/' + playbook_file_name;
-  var command = 'cat "' + playbook_file_path + '"';
+  var command = util.format(all_commands.general.read_file, playbook_file_path);
 
   ssh2_exec.executeCommand(command,null,successCallback,errorCallback,ansibleEngine)
 
@@ -346,7 +348,7 @@ exports.readPlaybook = function(project_folder,playbook_file_name, dataCallback,
 exports.deletePlaybook = function(project_folder,playbook_file_name, dataCallback, successCallback,errorCallback,ansibleEngine){
 
   var playbook_file_path = project_folder + '/' + playbook_file_name;
-  var command = 'rm -f "' + playbook_file_path + '"';
+  var command = util.format(all_commands.general.remove_file, playbook_file_path);
 
   ssh2_exec.executeCommand(command,null,successCallback,errorCallback,ansibleEngine)
 
@@ -354,6 +356,7 @@ exports.deletePlaybook = function(project_folder,playbook_file_name, dataCallbac
 
 /**
  * Get Playbook List
+ * List all files with .yml extension in the folder and return list of files as array
  * @param project_folder
  * @param successCallback
  * @param errorCallback
@@ -362,7 +365,7 @@ exports.deletePlaybook = function(project_folder,playbook_file_name, dataCallbac
 exports.getPlaybookList = function(project_folder, successCallback, errorCallback, ansibleEngine){
 
   var playbook_file_path = project_folder + '/';
-  var command = 'ls "' + playbook_file_path + '" | grep .yml';
+  var command = util.format(all_commands.general.get_playbook_list, playbook_file_path);
   var ansiblePlaybookListResults = "";
 
   ssh2_exec.executeCommand(command,
@@ -374,9 +377,7 @@ exports.getPlaybookList = function(project_folder, successCallback, errorCallbac
         files = ansiblePlaybookListResults.trim().split('\n');
       successCallback(files);
     },
-    function(data){
-      errorCallback(data)
-    },
+    errorCallback,
     ansibleEngine
   )
 
@@ -391,22 +392,20 @@ exports.getPlaybookList = function(project_folder, successCallback, errorCallbac
  */
 exports.getRolesList = function(project_folder, successCallback, errorCallback, ansibleEngine){
 
-  var playbook_file_path = project_folder + '/roles';
-  var command = 'ls "' + playbook_file_path + '"';
-  var ansiblePlaybookListResults = "";
+  var playbook_file_path = project_folder + config.paths.ansible_project_roles;
+  var command = util.format(all_commands.general.list_folder_contents, playbook_file_path);
+  var ansibleRolesListResults = "";
 
   ssh2_exec.executeCommand(command,
     null,
     function(data){
-      ansiblePlaybookListResults=data;
+      ansibleRolesListResults=data;
       var roles = [];
-      if(ansiblePlaybookListResults)
-        roles = ansiblePlaybookListResults.trim().split('\n');
+      if(ansibleRolesListResults)
+        roles = ansibleRolesListResults.trim().split('\n');
       successCallback(roles);
     },
-    function(data){
-      errorCallback(data)
-    },
+    errorCallback,
     ansibleEngine
   )
 
@@ -422,11 +421,11 @@ exports.getRolesList = function(project_folder, successCallback, errorCallback, 
  */
 exports.createProjectFolder = function(project_folder, successCallback, errorCallback, ansibleEngine){
 
-  var librarypath = project_folder + '/library';
-  var rolespath = project_folder + '/roles';
-  var command = 'mkdir -p "' + librarypath + '"; mkdir -p "' + rolespath + '"';
+  var librarypath = project_folder + config.paths.ansible_project_library;
+  var rolespath = project_folder + config.paths.ansible_project_roles;
+  var command = util.format(all_commands.ansible.create_ansible_project_folder, librarypath, rolespath);
 
-  var check_dir_command = '[ ! -d ' + project_folder + ' ]';
+  var check_dir_command = util.format(all_commands.general.check_dir_not_exists, project_folder);
 
   ssh2_exec.executeCommand(check_dir_command,null,function(data){
     ssh2_exec.executeCommand(command,null,successCallback,errorCallback,ansibleEngine);
@@ -451,11 +450,11 @@ exports.deleteProjectFolder = function(project){
 
   var ansibleEngine = project.ansibleEngine;
   var project_folder = ansibleEngine.projectFolder;
-  var archive_folder = config.paths.ansible_projects + '/archive';
+  var archive_folder = config.paths.ansible_projects + config.paths.ansible_projects_arhive;
 
-  var command = util.format('mkdir -p %s && tar -cvf %s/%s.tar %s && rm -rf %s', archive_folder, archive_folder, ansibleEngine.projectFolderName, project_folder, project_folder);
+  var command = util.format(all_commands.general.archive_folder, archive_folder, archive_folder, ansibleEngine.projectFolderName, project_folder, project_folder);
 
-  var check_dir_command = '[ -d ' + project_folder + ' ]';
+  var check_dir_command = util.format(all_commands.general.check_dir_exists, project_folder);
 
   ssh2_exec.executeCommand(check_dir_command,null,(data) => {
     ssh2_exec.executeCommand(command,null,
@@ -482,11 +481,8 @@ exports.deleteProjectFolder = function(project){
  */
 exports.searchRolesGalaxy = function(searchText, successCallback, errorCallback, ansibleEngine){
 
-  var command = 'ansible-galaxy search ' + searchText;
-  console.log('Command = ' + command);
+  var command = util.format(all_commands.ansible.ansible_galaxy_search, searchText);
   ssh2_exec.executeCommand(command,null,function(response){
-
-    console.log("Galaxy Response =" + response);
 
     if(response.indexOf('No roles match your search.') > -1){
       return errorCallback('No roles match your search.')
@@ -521,18 +517,13 @@ exports.searchRolesGalaxy = function(searchText, successCallback, errorCallback,
  * @param searchText
  * @param successCallback
  * @param errorCallback
- * @param ansibleEngine
  */
-exports.searchRolesGithub = function(searchText, successCallback, errorCallback, ansibleEngine){
+exports.searchRolesGithub = function(searchText, successCallback, errorCallback){
 
   var https = require('https');
-  var options = {
-    host: 'api.github.com',
-    path: '/search/repositories?q=ansible-role-' + searchText,
-    headers: {'user-agent': 'node.js'}
-  };
+  var options = all_commands.ansible.github_search_api_options;
 
-  console.log("path " + '/search/repositories?q=ansible-role' + searchText)
+  options.path = util.format(options.path, searchText);
 
   var req = https.get(options, function(res) {
     console.log('STATUS: ' + res.statusCode);
@@ -562,7 +553,6 @@ exports.searchRolesGithub = function(searchText, successCallback, errorCallback,
 
       successCallback(results);
 
-      // ...and/or process the entire body here.
     })
   });
 
@@ -584,9 +574,9 @@ exports.searchRolesGithub = function(searchText, successCallback, errorCallback,
 exports.createRole = function(roleName, successCallback, errorCallback, ansibleEngine){
 
   var projectFolder = ansibleEngine.projectFolder;
-  var command = 'cd "' + projectFolder +  '/roles"; ansible-galaxy init ' + roleName;
+  var command = util.format(all_commands.ansible.create_role, projectFolder, roleName);
 
-  ssh2_exec.executeCommand(command,null,successCallback,errorCallback,ansibleEngine);
+    ssh2_exec.executeCommand(command,null,successCallback,errorCallback,ansibleEngine);
 
 };
 
@@ -601,7 +591,7 @@ exports.createRole = function(roleName, successCallback, errorCallback, ansibleE
  */
 exports.copyRole = function(roleName, successCallback, errorCallback, ansibleEngine, selectedRoleName){
   var projectFolder = ansibleEngine.projectFolder;
-  var command = 'cd "' + projectFolder +  '/roles"; cp -r "' + selectedRoleName + '" "' + roleName + '"; rm -rf "' + roleName + '/.git"';
+  var command = util.format(all_commands.ansible.copy_role, projectFolder, selectedRoleName, roleName, roleName);
 
   ssh2_exec.executeCommand(command,null,successCallback,errorCallback,ansibleEngine);
 };
@@ -617,7 +607,7 @@ exports.copyRole = function(roleName, successCallback, errorCallback, ansibleEng
 exports.deleteRole = function(roleName, successCallback, errorCallback, ansibleEngine){
 
   var projectFolder = ansibleEngine.projectFolder;
-  var command = 'rm -rf "' + projectFolder +  '/roles/' + roleName + '"';
+  var command = util.format(all_commands.ansible.delete_role, projectFolder, roleName);
 
   ssh2_exec.executeCommand(command,null,successCallback,errorCallback,ansibleEngine);
 
@@ -636,13 +626,13 @@ exports.deleteRole = function(roleName, successCallback, errorCallback, ansibleE
 exports.importRole = function(roleType, roleNameUri, successCallback, errorCallback, ansibleEngine){
 
   var projectFolder = ansibleEngine.projectFolder;
-  var rolesFolder = projectFolder +  '/roles';
+  var rolesFolder = projectFolder +  config.paths.ansible_project_roles;
   var command = 'cd "' + rolesFolder + '";';
 
   if(roleType === 'gitrepo'){
-    command += 'git clone ' + roleNameUri;
+    command += util.format(all_commands.ansible.git_clone_repo, roleNameUri);
   }else if(roleType === 'galaxy'){
-    command += 'ansible-galaxy install ' + roleNameUri + ' -p ' + rolesFolder;
+    command += util.format(all_commands.ansible.ansible_galaxy_install, roleNameUri, rolesFolder);
   }else{
     return errorCallback('Invalid Type - allowed = gitrepo,galaxy ; given = ' + roleType);
   }
@@ -660,9 +650,10 @@ exports.importRole = function(roleType, roleNameUri, successCallback, errorCallb
 exports.getRoleFiles = function(roleName, successCallback, errorCallback, ansibleEngine){
 
   var projectFolder = ansibleEngine.projectFolder;
-  var command = 'cd "' + projectFolder + '/roles/' + roleName + '"; python /tmp/dir_tree.py';
+  var command = util.format(all_commands.general.list_roles_files_json, projectFolder, roleName);
 
-  scp2_exec.copyFileToScriptEngine('./helpers/dir_tree.py','/tmp/dir_tree.py',ansibleEngine,function(){
+  // Copy temporary script and execute
+  scp2_exec.copyFileToScriptEngine(config.paths.ansible_dir_tree_local,config.paths.ansible_dir_tree_remote,ansibleEngine,function(){
     ssh2_exec.executeCommand(command,null,successCallback,errorCallback,ansibleEngine);
   }, errorCallback);
 
@@ -677,9 +668,10 @@ exports.getRoleFiles = function(roleName, successCallback, errorCallback, ansibl
 exports.getProjectFiles = function(successCallback, errorCallback, ansibleEngine){
 
   var projectFolder = ansibleEngine.projectFolder;
-  var command = 'cd "' + projectFolder + '"; python /tmp/dir_tree.py';
+  var command = util.format(all_commands.general.list_files_json, projectFolder);
 
-  scp2_exec.copyFileToScriptEngine('./helpers/dir_tree.py','/tmp/dir_tree.py',ansibleEngine,function(response){
+  // Copy temporary script and execute
+  scp2_exec.copyFileToScriptEngine(config.paths.ansible_dir_tree_local,config.paths.ansible_dir_tree_remote,ansibleEngine,function(response){
     ssh2_exec.executeCommand(command,null,successCallback,errorCallback,ansibleEngine);
   }, errorCallback);
 
@@ -696,7 +688,7 @@ exports.getProjectFiles = function(successCallback, errorCallback, ansibleEngine
  */
 exports.getTagList = function(project_folder, playbook_name, inventory_file_name, successCallback, errorCallback, ansibleEngine){
 
-  var command = 'cd "' + project_folder + '"; python2.7 /tmp/list_tasks_json.py "' + playbook_name + '" -i "' + inventory_file_name + '" --list-hosts  --list-tasks-json ';
+  var command = util.format(all_commands.ansible.list_tags, project_folder, playbook_name, inventory_file_name);
 
   if(ansibleEngine.customModules){
     command = 'export ANSIBLE_LIBRARY="' + ansibleEngine.customModules + '"; ' + command;
@@ -704,8 +696,8 @@ exports.getTagList = function(project_folder, playbook_name, inventory_file_name
 
   console.log("Command = " + command);
 
-  scp2_exec.copyFileToScriptEngine('./helpers/list_tasks_json.py','/tmp/list_tasks_json.py',ansibleEngine,function(response){
-    console.log("Executing sshc command = " + command);
+  // Copy temporary script and execute
+  scp2_exec.copyFileToScriptEngine(config.paths.ansible_list_tasks_json_local,config.paths.ansible_list_tasks_json_remote,ansibleEngine,function(response){
     ssh2_exec.executeCommand(command,null,successCallback,errorCallback,ansibleEngine);
   }, errorCallback);
 
@@ -723,7 +715,7 @@ exports.getTagList = function(project_folder, playbook_name, inventory_file_name
 exports.createFile = function(fileAbsolutePath, successCallback, errorCallback, ansibleEngine){
 
   var projectFolder = ansibleEngine.projectFolder;
-  var command = 'touch "' + fileAbsolutePath + '"';
+  var command = util.format(all_commands.general.create_file, fileAbsolutePath);
 
   ssh2_exec.executeCommand(command,null,successCallback,errorCallback,ansibleEngine);
 
@@ -739,7 +731,7 @@ exports.createFile = function(fileAbsolutePath, successCallback, errorCallback, 
 exports.getInventoryList = function(project_folder, successCallback, errorCallback, ansibleEngine){
 
   var playbook_file_path = project_folder + '/';
-  var command = 'cd "' + playbook_file_path + '" ; ls --ignore="*.*" -p | grep -v /';
+  var command = util.format(all_commands.ansible.get_inventory_list, playbook_file_path);
   var ansiblePlaybookListResults = "";
 
   ssh2_exec.executeCommand(command,
@@ -770,7 +762,7 @@ exports.getInventoryList = function(project_folder, successCallback, errorCallba
 exports.readInventoryFile = function(project_folder, inventoryName, successCallback, errorCallback, ansibleEngine){
 
   var playbook_file_path = project_folder + '/';
-  var command = 'cat "' + playbook_file_path + inventoryName + '"';
+  var command = util.format(all_commands.general.read_file, playbook_file_path + inventoryName);
 
   ssh2_exec.executeCommand(command,
     null,
