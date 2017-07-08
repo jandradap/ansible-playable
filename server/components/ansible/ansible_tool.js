@@ -451,7 +451,7 @@ exports.deleteProjectFolder = function(project){
 
   var ansibleEngine = project.ansibleEngine;
   var project_folder = ansibleEngine.projectFolder;
-  var archive_folder = '/opt/ansible-projects/archive';
+  var archive_folder = config.paths.ansible_projects + '/archive';
 
   var command = util.format('mkdir -p %s && tar -cvf %s/%s.tar %s && rm -rf %s', archive_folder, archive_folder, ansibleEngine.projectFolderName, project_folder, project_folder);
 

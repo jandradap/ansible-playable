@@ -130,8 +130,8 @@ export function create(req, res) {
   if(!ansibleEngine.projectFolder){
     let projectFolderName = util.format('%s_%s',req.user._id, req.body.name);
 
-    ansibleEngine.projectFolder = util.format('/opt/ansible-projects/test_%s', projectFolderName);
-    ansibleEngine.customModules = util.format('/opt/ansible-projects/test_%s/library', projectFolderName);
+    ansibleEngine.projectFolder = util.format(config.paths.ansible_projects + '/test_%s', projectFolderName);
+    ansibleEngine.customModules = util.format(config.paths.ansible_projects + '/test_%s/library', projectFolderName);
 
     // Update project request body to save in db
     req.body.ansibleEngine.projectFolder = ansibleEngine.projectFolder;
