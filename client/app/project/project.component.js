@@ -7,11 +7,14 @@ import routes from './project.routes';
 
 export class ProjectComponent {
   /*@ngInject*/
-  constructor($scope, Projects, Auth) {
+  constructor($scope, Projects, Auth, appConfig) {
     'ngInject';
     var default_project_folder = '/opt/ehc-ansible-projects/';
 
-    $scope.blankProject = {
+    var projectCtrl = this;
+
+    // Define a blank project object
+    projectCtrl.blankProject = {
       name: '',
       ansibleEngine: {
         ansibleHost: '',
@@ -23,93 +26,108 @@ export class ProjectComponent {
       }
     };
 
-    $scope.msg = "";
-    $scope.msg_status = "";
+    projectCtrl.msg = "";
+    projectCtrl.msg_status = "";
 
-    $scope.newProject = $scope.blankProject;
+    projectCtrl.newProject = projectCtrl.blankProject;
 
-    $scope.editProjectFlag = false;
+    projectCtrl.editProjectFlag = false;
 
-    $scope.saveButtonIcon = "fa-save";
+    projectCtrl.saveButtonIcon = "fa-save";
 
-    $scope.showProjectForm = function(){
-      $scope.showCreateProject = true;
-      $scope.editProjectFlag = false;
-      $scope.newProject = $scope.blankProject;
-      $scope.msg = "";
-      $scope.msg_status = "";
+    /**
+     * Show Project Form when the create button is clicked
+     */
+    projectCtrl.showProjectForm = function(){
+      projectCtrl.showCreateProject = true;
+      projectCtrl.editProjectFlag = false;
+      projectCtrl.newProject = projectCtrl.blankProject;
+      projectCtrl.msg = "";
+      projectCtrl.msg_status = "";
     };
 
-
-    $scope.hideProjectForm = function(){
-      $scope.showCreateProject = false;
-      $scope.editProjectFlag = false;
-      $scope.newProject = $scope.blankProject;
-      $scope.msg = "";
-      $scope.msg_status = "";
+    /**
+     * Hide Project form when cancel button is clicked
+     */
+    projectCtrl.hideProjectForm = function(){
+      projectCtrl.showCreateProject = false;
+      projectCtrl.editProjectFlag = false;
+      projectCtrl.newProject = projectCtrl.blankProject;
+      projectCtrl.msg = "";
+      projectCtrl.msg_status = "";
     };
 
-    $scope.getProjects = function(){
-      console.log("Getting Projects");
-      $scope.projects = Projects.resource.query(function(){
-        console.log($scope.projects);
+    /**
+     * Get list of all projects
+     */
+    projectCtrl.getProjects = function(){
+      projectCtrl.projects = Projects.resource.query(function(){
+        console.log(projectCtrl.projects);
       })
 
     };
 
-    $scope.getProjects();
-
-    $scope.deleteProject = function(project){
+    /**
+     * Delete Project
+     * @param project
+     */
+    projectCtrl.deleteProject = function(project){
       project.$remove(function(){
-        $scope.getProjects();
+        projectCtrl.getProjects();
       })
     };
 
-    $scope.editProject = function(project){
-      $scope.showCreateProject = true;
-      $scope.editProjectFlag = true;
-      $scope.newProject = project;
+    /**
+     * Edit Project
+     * @param project
+     */
+    projectCtrl.editProject = function(project){
+      projectCtrl.showCreateProject = true;
+      projectCtrl.editProjectFlag = true;
+      projectCtrl.newProject = project;
     };
 
-    $scope.createProject = function(){
-      $scope.newProject.creationTime = new Date();
-      //$scope.newProject.ansibleEngine.projectFolder = default_project_folder + '/' + $scope.newProject.name
-      //$scope.newProject.ansibleEngine.customModules = $scope.newProject.ansibleEngine.projectFolder + '/library'
+    /**
+     * Create a new Project
+     */
+    projectCtrl.createProject = function(){
+      projectCtrl.newProject.creationTime = new Date();
 
       var projectSavedCallback = function(){
-        $scope.showCreateProject = false;
-        $scope.msg = "Project Saved Successfully";
-        $scope.msg_status = "success";
-        $scope.getProjects();
-        $scope.saveButtonIcon = 'fa-save';
+        projectCtrl.showCreateProject = false;
+        projectCtrl.msg = "Project Saved Successfully";
+        projectCtrl.msg_status = "success";
+        projectCtrl.getProjects();
+        projectCtrl.saveButtonIcon = 'fa-save';
       };
 
       var projectSaveFailedCallback = function(errResponse){
-        $scope.msg = errResponse.data;
-        $scope.msg_status = "danger";
-        $scope.saveButtonIcon = 'fa-save';
+        projectCtrl.msg = errResponse.data;
+        projectCtrl.msg_status = "danger";
+        projectCtrl.saveButtonIcon = 'fa-save';
       };
 
-      $scope.saveButtonIcon = 'fa-spinner fa-spin';
+      projectCtrl.saveButtonIcon = 'fa-spinner fa-spin';
 
-      if($scope.editProjectFlag){
-        $scope.editProjectFlag = false;
-        $scope.newProject.$update(projectSavedCallback,projectSaveFailedCallback);
+      if(projectCtrl.editProjectFlag){
+        projectCtrl.editProjectFlag = false;
+        projectCtrl.newProject.$update(projectSavedCallback,projectSaveFailedCallback);
       }else{
-        Projects.resource.save($scope.newProject,projectSavedCallback,projectSaveFailedCallback);
+        Projects.resource.save(projectCtrl.newProject,projectSavedCallback,projectSaveFailedCallback);
       }
-
 
     };
 
-    $scope.$watch('newProject.name', function(newValue, oldValue){
-      console.log("Changed");
+    // Watch for project name change in create mode and update project and custom modules folder dynamically
+    $scope.$watch('projectCtrl.newProject.name', function(newValue, oldValue){
       // Project folders cannot be edited once created
       var user_id = Auth.getCurrentUserSync()._id;
-      if($scope.editProjectFlag)return;
-      $scope.newProject.ansibleEngine.projectFolder = '/opt/ansible-projects/' + user_id + '_' + newValue;
-      $scope.newProject.ansibleEngine.customModules = '/opt/ansible-projects/' + user_id + '_' + newValue + '/library';
+      if(projectCtrl.editProjectFlag)return;
+      projectCtrl.newProject.ansibleEngine.projectFolder = appConfig.paths.ansible_projects + '/' + user_id + '_' + newValue;
+      projectCtrl.newProject.ansibleEngine.customModules = appConfig.paths.ansible_projects + '/' + user_id + '_' + newValue + '/library';
     });
+
+    projectCtrl.getProjects();
 
   }
 }
