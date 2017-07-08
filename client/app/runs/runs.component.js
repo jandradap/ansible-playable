@@ -41,7 +41,7 @@ export class RunsComponent {
     $scope.showLogs = function(runData){
       var modalInstance = $uibModal.open({
         animation: false,
-        templateUrl: 'app/designer/execution/executeModal.html',
+        template: require('../designer/execution/executeModal.html'),
         controller: 'ExecutionController',
         size: 'lg',
         backdrop  : 'static',

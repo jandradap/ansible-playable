@@ -166,8 +166,7 @@ export class CustomModulesComponent {
       $scope.result = "";
       var modalInstance = $uibModal.open({
         animation: true,
-        /*templateUrl: 'createTaskContent.html',*/
-        templateUrl: 'app/modals/complex_var_modal/complexVariable.html',
+        template: require('../../app/modals/complex_var_modal/complexVariable.html'),
         controller: 'ComplexVarModalController',
         size: 'sm',
         backdrop: 'static',

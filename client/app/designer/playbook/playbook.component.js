@@ -86,8 +86,7 @@ export class PlaybookComponent {
     $scope.showCreatePlaybookModal = function(){
       var modalInstance = $uibModal.open({
         animation: true,
-        /*templateUrl: 'createTaskContent.html',*/
-        templateUrl: 'app/designer/playbook/new_playbook/new_playbook.html',
+        template: require('./new_playbook/new_playbook.html'),
         controller: 'NewPlaybookController',
         size: 'md',
         backdrop  : 'static',
@@ -156,8 +155,7 @@ export class PlaybookComponent {
     $scope.showCreatePlayModal = function(selectedPlayIndex){
       var modalInstance = $uibModal.open({
         animation: true,
-        /*templateUrl: 'createPlayContent.html',*/
-        templateUrl: 'app/designer/playbook/new_play/new_play.html',
+        template: require('./new_play/new_play.html'),
         controller: 'NewPlayController',
         size: 'lg',
         backdrop  : 'static',
@@ -211,11 +209,10 @@ export class PlaybookComponent {
     // ------------------- EXECUTE PLAYBOOK MODAL -------------
 
     $scope.executeAnsiblePlayBook = function(tags,executionType,executionName,selectedPlay){
-      console.log("Tags type" + typeof tags)
+
       var modalInstance = $uibModal.open({
         animation: true,
-        /*templateUrl: 'createTaskContent.html',*/
-        templateUrl: 'app/designer/execution/executeModal.html',
+        template: require('../execution/executeModal.html'),
         controller: 'ExecutionController',
         size: 'lg',
         backdrop  : 'static',

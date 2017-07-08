@@ -4,7 +4,7 @@ const angular = require('angular');
 export default angular.module('webAppApp.tasks', [])
   .directive('tasks', function(ansible, $uibModal) {
     return {
-      templateUrl: 'app/designer/tasks/tasks.html',
+      template: require('./tasks.html'),
       restrict: 'EA',
       scope: {
         tasksList: '=',
@@ -23,7 +23,6 @@ export default angular.module('webAppApp.tasks', [])
         scope.tasksMetaData = [];
 
         scope.$watch('tasksList',function(){
-          console.log('tasks list changed');
           scope.tasksMetaData = [];
 
           angular.forEach(scope.tasksList,function(task){
@@ -94,8 +93,7 @@ export default angular.module('webAppApp.tasks', [])
         scope.showTaskModal = function(selectedTaskIndex, copyTask){
           var modalInstance = $uibModal.open({
             animation: true,
-            /*templateUrl: 'createTaskContent.html',*/
-            templateUrl: 'app/designer/tasks/new_task/new_task.html',
+            template: require('./new_task/new_task.html'),
             controller: 'NewTaskController',
             size: 'lg',
             backdrop  : 'static',

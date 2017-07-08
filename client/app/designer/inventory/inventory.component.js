@@ -75,8 +75,7 @@ export class InventoryComponent {
     $scope.showCreatInventoryModal = function () {
       var modalInstance = $uibModal.open({
         animation: true,
-        /*templateUrl: 'createTaskContent.html',*/
-        templateUrl: 'app/designer/inventory/new_inventory/new_inventory.html',
+        template: require('./new_inventory/new_inventory.html'),
         controller: 'NewInventoryController',
         size: 'md',
         backdrop: 'static',
@@ -105,8 +104,7 @@ export class InventoryComponent {
     $scope.showCreateGroupModal = function (editGroup) {
       var modalInstance = $uibModal.open({
         animation: true,
-        /*templateUrl: 'createTaskContent.html',*/
-        templateUrl: 'app/designer/inventory/new_group/new_group.html',
+        template: require('./new_group/new_group.html'),
         controller: 'NewGroupController',
         size: 'lg',
         backdrop: 'static',
@@ -145,8 +143,7 @@ export class InventoryComponent {
     $scope.showCreateHostModal = function (editHost) {
       var modalInstance = $uibModal.open({
         animation: true,
-        /*templateUrl: 'createTaskContent.html',*/
-        templateUrl: 'app/designer/inventory/new_host/new_host.html',
+        template: require('./new_host/new_host.html'),
         controller: 'NewHostController',
         size: 'lg',
         backdrop: 'static',

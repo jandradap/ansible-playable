@@ -414,8 +414,7 @@ export function newTaskController($window, $scope, $sce, $uibModal, ansi2html, a
     variable.isComplexVariable = true;
     var modalInstance = $uibModal.open({
       animation: true,
-      /*templateUrl: 'createTaskContent.html',*/
-      templateUrl: 'app/modals/complex_var_modal/complexVariable.html',
+      template: require('../../../modals/complex_var_modal/complexVariable.html'),
       controller: 'ComplexVarModalController',
       size: 'sm',
       backdrop: 'static',

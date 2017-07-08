@@ -196,8 +196,7 @@ export class RolesComponent {
     $scope.showCreateFileModal = function (selectedFile, copyFile) {
       var modalInstance = $uibModal.open({
         animation: true,
-        /*templateUrl: 'createTaskContent.html',*/
-        templateUrl: 'app/designer/roles/new_file/new_file.html',
+        template: require('./new_file/new_file.html'),
         controller: 'NewFileController',
         size: 'md',
         backdrop: 'static',
@@ -230,8 +229,7 @@ export class RolesComponent {
     $scope.showCreateRoleModal = function (copyRole) {
       var modalInstance = $uibModal.open({
         animation: true,
-        /*templateUrl: 'createTaskContent.html',*/
-        templateUrl: 'app/designer/roles/new_role/new_role.html',
+        template: require('./new_role/new_role.html'),
         controller: 'NewRoleController',
         size: 'md',
         backdrop: 'static',
@@ -259,8 +257,7 @@ export class RolesComponent {
     $scope.showSearchRoleModal = function () {
       var modalInstance = $uibModal.open({
         animation: true,
-        /*templateUrl: 'createTaskContent.html',*/
-        templateUrl: 'app/designer/roles/search_role/search_role.html',
+        template: require('./search_role/search_role.html'),
         controller: 'SearchRoleController',
         size: 'lg',
         backdrop: 'static',
@@ -399,17 +396,14 @@ export class RolesComponent {
     // ------------------- EXECUTE PLAYBOOK MODAL -------------
 
     $scope.executeAnsiblePlayBook = function (tags, executionType, executionName, selectedPlay) {
-      console.log("Tags type" + typeof tags);
 
       var projectRolesFolder = Projects.selectedProject.ansibleEngine.projectFolder + '/roles';
       var rolesFolder = projectRolesFolder + '/' + $scope.selectedRole.role;
       var roleName = $scope.selectedRole.role;
-      console.log("Projects Roles Folder" + projectRolesFolder);
 
       var modalInstance = $uibModal.open({
         animation: true,
-        /*templateUrl: 'createTaskContent.html',*/
-        templateUrl: 'app/designer/execution/executeModal.html',
+        template: require('../execution/executeModal.html'),
         controller: 'ExecutionController',
         size: 'lg',
         backdrop: 'static',
