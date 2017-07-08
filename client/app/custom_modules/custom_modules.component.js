@@ -10,47 +10,58 @@ export class CustomModulesComponent {
   constructor($scope,customModules,$sce,ansi2html,Projects,$uibModal,YAML) {
     'ngInject';
 
-    $scope.custom_modules = [];
-    $scope.selectedModule = {module:{},module_code:"",module_unchanged_code:""};
-    $scope.selected_module_code = "something";
+    var customModulesCtrl = this;
 
-    $scope.showNewModuleForm = {value:false};
+    customModulesCtrl.custom_modules = [];
+    customModulesCtrl.selectedModule = {module:{},module_code:"",module_unchanged_code:""};
+    customModulesCtrl.selected_module_code = "something";
 
-    $scope.getProjects = function(){
-      $scope.projects = Projects.resource.query(function(){
-        if($scope.projects.length){
-          $scope.selectedProjectID = localStorage.selectedProjectID || $scope.projects[0]._id;
-          $scope.projectSelected($scope.selectedProjectID)
+    customModulesCtrl.showNewModuleForm = {value:false};
+
+    /**
+     * Get List of Projects
+     */
+    customModulesCtrl.getProjects = function(){
+      customModulesCtrl.projects = Projects.resource.query(function(){
+        if(customModulesCtrl.projects.length){
+          customModulesCtrl.selectedProjectID = localStorage.selectedProjectID || customModulesCtrl.projects[0]._id;
+          customModulesCtrl.projectSelected(customModulesCtrl.selectedProjectID)
         }
 
       })
     };
 
-    $scope.projectSelected = function(projectID){
+    /**
+     * On project selection
+     *  - List all custom modules in that project
+     * @param projectID
+     */
+    customModulesCtrl.projectSelected = function(projectID){
 
       localStorage.selectedProjectID = projectID;
 
-      $scope.selectedProject = Projects.resource.get({id: projectID},function(){
-        Projects.selectedProject = $scope.selectedProject;
-        $scope.getCustomModules();
+      customModulesCtrl.selectedProject = Projects.resource.get({id: projectID},function(){
+        Projects.selectedProject = customModulesCtrl.selectedProject;
+        customModulesCtrl.getCustomModules();
       })
     };
 
-    $scope.getProjects();
 
-    $scope.getCustomModules = function(){
+    /**
+     * Get a list of Custom modules in the selected project
+     */
+    customModulesCtrl.getCustomModules = function(){
       customModules.get(function(response){
-        console.log(response.data);
         var lines = response.data.split("\n");
         if(lines.length)
           lines = lines
             .filter(function(line){return line.indexOf(".py") > -1})
             .map(function(item){return {name:item}});
-        $scope.custom_modules = lines;
+        customModulesCtrl.custom_modules = lines;
 
-        if($scope.selectedModule.module.name){
-          $scope.selectedModule.module = $scope.custom_modules.filter(function(item){
-            return (item.name == $scope.selectedModule.module.name)
+        if(customModulesCtrl.selectedModule.module.name){
+          customModulesCtrl.selectedModule.module = customModulesCtrl.custom_modules.filter(function(item){
+            return (item.name == customModulesCtrl.selectedModule.module.name)
           })[0]
         }
 
@@ -58,64 +69,88 @@ export class CustomModulesComponent {
       });
     };
 
-    $scope.loadingModuleCode = false
 
-    $scope.showModuleCode = function(module_name){
-      $scope.loadingModuleCode = true;
+
+    /**
+     * Show Module Code. Read the module file contents and display in UI
+     * @param module_name
+     */
+    customModulesCtrl.loadingModuleCode = false;
+
+    customModulesCtrl.showModuleCode = function(module_name){
+      customModulesCtrl.loadingModuleCode = true;
       if(!module_name){
-        $scope.selectedModule.module_code = "Select a module";
+        customModulesCtrl.selectedModule.module_code = "Select a module";
         return;
       }
       customModules.show(module_name,function(response) {
-        $scope.loadingModuleCode = false;
-        $scope.selectedModule.module_code = response.data.split("Stream :: close")[0];
-        $scope.selectedModule.module_unchanged_code = angular.copy($scope.selectedModule.module_code);
+        customModulesCtrl.loadingModuleCode = false;
+        customModulesCtrl.selectedModule.module_code = response.data.split("Stream :: close")[0];
+        customModulesCtrl.selectedModule.module_unchanged_code = angular.copy(customModulesCtrl.selectedModule.module_code);
       });
     };
 
-    $scope.$watch('selectedModule.module',function(newValue,oldValue){
+
+    /**
+     * On selected module change display code in UI
+     */
+    $scope.$watch('customModulesCtrl.selectedModule.module',function(newValue,oldValue){
       if(newValue.name && newValue.name !== oldValue.name){
-        $scope.selectedModule.module_code = "Loading Module Code...";
-        $scope.showModuleCode(newValue.name)
+        customModulesCtrl.selectedModule.module_code = "Loading Module Code...";
+        customModulesCtrl.showModuleCode(newValue.name)
       }
     });
 
-    $scope.code_has_changed = false;
 
-    $scope.codeChanged = function(){
-      console.log("Code Changed");
-      if($scope.selectedModule.module_unchanged_code !== $scope.selectedModule.module_code){
-        $scope.code_has_changed = true
+    /**
+     * On Code Change
+     *
+     */
+    customModulesCtrl.code_has_changed = false;
+
+    customModulesCtrl.codeChanged = function(){
+      if(customModulesCtrl.selectedModule.module_unchanged_code !== customModulesCtrl.selectedModule.module_code){
+        customModulesCtrl.code_has_changed = true
       }else{
-        $scope.code_has_changed = false
+        customModulesCtrl.code_has_changed = false
       }
     };
 
-    $scope.discardCodeChanges = function(){
-      $scope.selectedModule.module_code = angular.copy($scope.selectedModule.module_unchanged_code);
+    /**
+     * Discard code changes
+     */
+    customModulesCtrl.discardCodeChanges = function(){
+      customModulesCtrl.selectedModule.module_code = angular.copy(customModulesCtrl.selectedModule.module_unchanged_code);
     };
 
-    $scope.saveModule = function(){
-      $scope.saving = true;
-      customModules.save($scope.selectedModule.module.name,$scope.selectedModule.module_code,function(response){
-        $scope.saving = false;
-        $scope.code_has_changed = false;
-        $scope.selectedModule.module_unchanged_code = angular.copy($scope.selectedModule.module_code);
-        console.log("Success")
+    /**
+     * Save Module
+     */
+    customModulesCtrl.saveModule = function(){
+      customModulesCtrl.saving = true;
+      customModules.save(customModulesCtrl.selectedModule.module.name,customModulesCtrl.selectedModule.module_code,function(response){
+        customModulesCtrl.saving = false;
+        customModulesCtrl.code_has_changed = false;
+        customModulesCtrl.selectedModule.module_unchanged_code = angular.copy(customModulesCtrl.selectedModule.module_code);
+
       },function(response){
-        $scope.saving = false;
+        customModulesCtrl.saving = false;
         console.error(response.data)
       })
     };
 
-    $scope.testModule = function(){
+
+    /**
+     * Test Module
+     */
+    customModulesCtrl.testModule = function(){
 
       var re = /([^]+DOCUMENTATION = '''\s+)([^]+?)(\s+'''[^]+)/;
-      var module_string = $scope.selectedModule.module_code.replace(re,'$2');
+      var module_string = customModulesCtrl.selectedModule.module_code.replace(re,'$2');
 
-      $scope.selectedModuleObject = YAML.parse(module_string);
+      customModulesCtrl.selectedModuleObject = YAML.parse(module_string);
 
-      //var options_copy = angular.copy($scope.selectedModuleObject.options);
+      //var options_copy = angular.copy(customModulesCtrl.selectedModuleObject.options);
       var options_copy = {};
       /*options_copy = options_copy.map(function(item){
        var temp_obj = {};
@@ -123,7 +158,7 @@ export class CustomModulesComponent {
        return temp_obj
        });*/
 
-      var module_name = $scope.selectedModule.module.name;
+      var module_name = customModulesCtrl.selectedModule.module.name;
       var module_cached_args = null;
 
       try{
@@ -133,7 +168,7 @@ export class CustomModulesComponent {
         module_cached_args = null;
       }
 
-      angular.forEach($scope.selectedModuleObject.options,function(value,key){
+      angular.forEach(customModulesCtrl.selectedModuleObject.options,function(value,key){
         //var temp_obj = {};
         //temp_obj[key] = "";
         options_copy[key] = "";
@@ -146,24 +181,33 @@ export class CustomModulesComponent {
 
 
       var variable = {name:'',complexValue:options_copy};
-      $scope.showComplexVariable(variable);
+      customModulesCtrl.showComplexVariable(variable);
 
     };
 
-    $scope.newModule = function(){
-      $scope.showNewModuleForm.value = true;
+    /**
+     * New Module - On pressing New Module button
+     */
+    customModulesCtrl.newModule = function(){
+      customModulesCtrl.showNewModuleForm.value = true;
       $scope.$broadcast ('newModule');
     };
 
-    $scope.editModule = function(){
-      $scope.showNewModuleForm.value = true;
+    /**
+     * Edit Module - On pressing Edit Module button
+     */
+    customModulesCtrl.editModule = function(){
+      customModulesCtrl.showNewModuleForm.value = true;
       $scope.$broadcast ('editModule');
     };
 
 
-
-    $scope.showComplexVariable = function(variable){
-      $scope.result = "";
+    /**
+     * Show Complex Variable modal for getting input parameters for testing module
+     * @param variable
+     */
+    customModulesCtrl.showComplexVariable = function(variable){
+      customModulesCtrl.result = "";
       var modalInstance = $uibModal.open({
         animation: true,
         template: require('../../app/modals/complex_var_modal/complexVariable.html'),
@@ -188,7 +232,7 @@ export class CustomModulesComponent {
 
       modalInstance.result.then(function (module_args) {
 
-        var module_name = $scope.selectedModule.module.name;
+        var module_name = customModulesCtrl.selectedModule.module.name;
 
         /*var args = "";
          angular.forEach(selectedItem,function(value,key){
@@ -205,22 +249,26 @@ export class CustomModulesComponent {
 
         localStorage['test_args_'+module_name] = JSON.stringify(module_args);
 
-        $scope.testing = true;
+        customModulesCtrl.testing = true;
 
         customModules.test(module_name,module_args,function(response) {
-            $scope.testing = false;
-            $scope.result = $sce.trustAsHtml(ansi2html.toHtml(response.data.split("Stream :: close")[0]).replace(/\n/g, "<br>"));
+            customModulesCtrl.testing = false;
+            customModulesCtrl.result = $sce.trustAsHtml(ansi2html.toHtml(response.data.split("Stream :: close")[0]).replace(/\n/g, "<br>"));
           },
           function(response) {
-            $scope.testing = false;
-            $scope.result = $sce.trustAsHtml(ansi2html.toHtml(response.data.split("Stream :: close")[0]).replace(/\n/g, "<br>"));
+            customModulesCtrl.testing = false;
+            customModulesCtrl.result = $sce.trustAsHtml(ansi2html.toHtml(response.data.split("Stream :: close")[0]).replace(/\n/g, "<br>"));
           });
 
       }, function () {
 
       });
 
-    }
+    };
+
+    // List projects
+    customModulesCtrl.getProjects();
+
   }
 }
 

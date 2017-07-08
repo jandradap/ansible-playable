@@ -1,10 +1,10 @@
 <div class="row" style="margin:20px;">
   <div class="col-md-7">
-    <div ng-show="!showNewModuleForm.value">
-      <div style="display: inline-block"><select class="form-control" ng-model="selectedProjectID" ng-change="projectSelected(selectedProjectID)" ng-options="project._id as project.name for project in projects">
+    <div ng-show="!customModulesCtrl.showNewModuleForm.value">
+      <div style="display: inline-block"><select class="form-control" ng-model="customModulesCtrl.selectedProjectID" ng-change="customModulesCtrl.projectSelected(customModulesCtrl.selectedProjectID)" ng-options="project._id as project.name for project in customModulesCtrl.projects">
       </select></div>
-      <button class="btn btn-default" ng-click="newModule()"> New Module <span class="fa fa-plus"></span> </button>
-      <button class="btn btn-default" ng-disabled="!selectedModule.module.name || loadingModuleCode" ng-click="editModule()"> Edit Module <span class="fa fa-edit"></span> </button>
+      <button class="btn btn-default" ng-click="customModulesCtrl.newModule()"> New Module <span class="fa fa-plus"></span> </button>
+      <button class="btn btn-default" ng-disabled="!customModulesCtrl.selectedModule.module.name || customModulesCtrl.loadingModuleCode" ng-click="customModulesCtrl.editModule()"> Edit Module <span class="fa fa-edit"></span> </button>
 
       <div class="table-responsive">
         <table class="table">
@@ -12,22 +12,14 @@
           <tr>
             <th>Select</th>
             <th>Name</th>
-            <!--<th>Actions</th>-->
           </tr>
           </thead>
           <tbody>
-          <tr ng-repeat="module in custom_modules">
-            <td><input name="moduleGroup" type="radio" ng-model="selectedModule.module" ng-value="module">
+          <tr ng-repeat="module in customModulesCtrl.custom_modules">
+            <td><input name="moduleGroup" type="radio" ng-model="customModulesCtrl.selectedModule.module" ng-value="module">
             </td>
             </td>
             <td>{{module.name}}</td>
-            <!--<td><div class="btn-group">
-              <label class="btn btn-default" ng-click="showTaskModal($index)" ><span class="fa fa-edit"></span></label>
-              <label class="btn btn-danger"  ng-click="deleteTask($index)" confirm="Are you sure you want to delete?"><span class="fa fa-trash"></span></label>
-              <div style="display: inline-block" tooltip-enable="!task.tags" uib-tooltip="Tag must be assigned to play individually"><label class="btn btn-success" ng-disabled="!task.tags"  ng-click="executeAnsiblePlayBook(task.tags,'Task',task.name, selectedPlay)" ><span class="fa fa-play"></span></label></div>
-              <label class="btn btn-primary" ng-disabled="$first"  ng-click="moveUp(selectedPlay.play.tasks,$index,'saveTaskListLoading')" ><span class="fa fa-arrow-up"></span></label>
-              <label class="btn btn-primary" ng-disabled="$last" ng-click="moveDown(selectedPlay.play.tasks,$index,'saveTaskListLoading')" ><span class="fa fa-arrow-down"></span></label>
-            </div></td>-->
           </tr>
           </tbody>
         </table>
@@ -35,18 +27,23 @@
 
       <!--<button class="btn btn-primary" ng-disabled="!selectedModule.module.name || !code_has_changed" ng-click="saveModule()"> Save <span ng-if="!saving" class="fa fa-save"></span> <span ng-if="saving" class="fa fa-spin fa-spinner"></span> </button>
       <button class="btn btn-warning" ng-disabled="!selectedModule.module.name || !code_has_changed" confirm="Are you sure you want to discard code changes?" ng-click="discardCodeChanges()"> Discard <span class="fa fa-rotate-left"></span> </button>-->
-      <button class="btn btn-default" ng-disabled="!selectedModule.module.name || loadingModuleCode" ng-click="testModule()"> Test <span ng-if="!testing" class="fa fa-check-circle-o"></span> <span ng-if="testing" class="fa fa-spin fa-spinner"></span> </button>
+      <button class="btn btn-default" ng-disabled="!customModulesCtrl.selectedModule.module.name || customModulesCtrl.loadingModuleCode" ng-click="customModulesCtrl.testModule()"> Test <span ng-if="!testing" class="fa fa-check-circle-o"></span> <span ng-if="testing" class="fa fa-spin fa-spinner"></span> </button>
 
-      <div style="background:black;color:lightgrey;width:100%;padding:20px;word-wrap: break-word;" ng-if="result">
-        <p class="logconsole" ng-bind-html="result"></p>
+      <div style="background:black;color:lightgrey;width:100%;padding:20px;word-wrap: break-word;" ng-if="customModulesCtrl.result">
+        <p class="logconsole" ng-bind-html="customModulesCtrl.result"></p>
       </div>
     </div>
 
-    <div class="slide-animate" ng-show="showNewModuleForm.value" ng-include="'app/custom_modules/new_module/new_module.html'"></div>
+    <div ng-show="customModulesCtrl.showNewModuleForm.value"  ng-include="'/app/custom_modules/new_module/new_module.html'"></div>
+    <div ng-show="customModulesCtrl.showNewModuleForm.value" >
+      <new-module>
+      </new-module>
+    </div>
+
 
   </div>
   <div class="col-md-5">
-    <div ng-readonly="!showNewModuleForm.value" ui-ace="{theme:'twilight',document:'Python',mode:'python',onChange:codeChanged}" ng-model="selectedModule.module_code">
+    <div ng-readonly="!customModulesCtrl.showNewModuleForm.value" ui-ace="{theme:'twilight',document:'Python',mode:'python',onChange:customModulesCtrl.codeChanged}" ng-model="customModulesCtrl.selectedModule.module_code">
 
     </div>
 

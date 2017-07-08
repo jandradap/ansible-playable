@@ -1,4 +1,4 @@
-<div class="row" ng-controller="NewModuleController">
+<div class="row" ng-controller="NewModuleController as newModuleCtrl">
 
     <div class="panel">
       <div class="panel panel-primary">
@@ -8,25 +8,25 @@
             <div class="col-md-4">
               <p class="form-group">
                 <label>Module Name</label>
-                <input type="text" ng-model="newModule.module" class="form-control" ng-required="true" placeholder="modulename">
+                <input type="text" ng-model="newModuleCtrl.newModule.module" class="form-control" ng-required="true" placeholder="modulename">
               </p>
             </div>
             <div class="col-md-2">
               <p class="form-group">
                 <label>Version Added</label>
-                <input type="text" ng-model="newModule.version_added" class="form-control" ng-required="true" placeholder="X.Y">
+                <input type="text" ng-model="newModuleCtrl.newModule.version_added" class="form-control" ng-required="true" placeholder="X.Y">
               </p>
             </div>
             <div class="col-md-2">
               <p class="form-group">
                 <label>Check Mode</label>
-                <label class="checkbox-inline"><input ng-model="newModule.supports_check_mode" type="checkbox"></label>
+                <label class="checkbox-inline"><input ng-model="newModuleCtrl.newModule.supports_check_mode" type="checkbox"></label>
               </p>
             </div>
             <div class="col-md-4">
               <p class="form-group">
                 <label>Author</label>
-                <input type="text" ng-model="newModule.author" class="form-control" ng-required="true" placeholder="Your AWESOME name, @awesome-github-id">
+                <input type="text" ng-model="newModuleCtrl.newModule.author" class="form-control" ng-required="true" placeholder="Your AWESOME name, @awesome-github-id">
               </p>
             </div>
           </div>
@@ -35,13 +35,13 @@
             <div class="col-md-4">
               <p class="form-group">
                 <label>Short Description</label>
-                <input type="text" ng-model="newModule.short_description" class="form-control" ng-required="true" placeholder="This is a sentence describing the module">
+                <input type="text" ng-model="newModuleCtrl.newModule.short_description" class="form-control" ng-required="true" placeholder="This is a sentence describing the module">
               </p>
             </div>
             <div class="col-md-8">
               <p class="form-group">
                 <label>Description</label>
-                <input type="text" ng-model="newModule.description" class="form-control" ng-required="true" placeholder="Longer description of the module; You might include instructions">
+                <input type="text" ng-model="newModuleCtrl.newModule.description" class="form-control" ng-required="true" placeholder="Longer description of the module; You might include instructions">
               </p>
             </div>
           </div>
@@ -49,12 +49,12 @@
 
           <p class="form-group">
             <label>Notes</label>
-            <input type="text" ng-model="newModule.notes" class="form-control" ng-required="true" placeholder="Other things consumers of your module should know">
+            <input type="text" ng-model="newModuleCtrl.newModule.notes" class="form-control" ng-required="true" placeholder="Other things consumers of your module should know">
           </p>
 
           <p class="form-group">
             <label>Requirements</label>
-            <input type="text" ng-model="newModule.requirements" class="form-control" ng-required="true" placeholder="List of required things separated by semicolon; like the factor package; or a specific platform">
+            <input type="text" ng-model="newModuleCtrl.newModule.requirements" class="form-control" ng-required="true" placeholder="List of required things separated by semicolon; like the factor package; or a specific platform">
           </p>
 
           <div class="panel">
@@ -88,7 +88,7 @@
                   </div>
                 </div>
 
-                <div ng-repeat="option in newModule.options">
+                <div ng-repeat="option in newModuleCtrl.newModule.options">
 
                   <div class="row">
                     <div class="col-md-2" style="padding:2px;">
@@ -100,7 +100,7 @@
                     </div>
 
                     <div class="col-md-1" style="padding:2px;">
-                      <select class="form-control" ng-model="option.type" ng-options="optionType for optionType in optionTypes">
+                      <select class="form-control" ng-model="option.type" ng-options="optionType for optionType in newModuleCtrl.optionTypes">
                       </select>
                     </div>
 
@@ -118,8 +118,8 @@
                     </div>
                     <div class="col-md-1" style="padding:2px;text-align: center;">
                       <div class="btn-group">
-                        <label class="btn btn-default" uib-tooltip="Insert new row after" ng-click="newModule.options.splice($index+1,0,{})" style="padding-top: 3px;padding-bottom: 3px;padding-left:5px;padding-right:5px;"><span class="fa fa-plus"></span></label>
-                        <label class="btn btn-danger" uib-tooltip="Delete row" ng-click="newModule.options.splice($index,1)" style="padding-top: 3px;padding-bottom: 3px; padding-left:5px; padding-right:5px;"><span class="fa fa-minus"></span></label>
+                        <label class="btn btn-default" uib-tooltip="Insert new row after" ng-click="newModuleCtrl.newModule.options.splice($index+1,0,{})" style="padding-top: 3px;padding-bottom: 3px;padding-left:5px;padding-right:5px;"><span class="fa fa-plus"></span></label>
+                        <label class="btn btn-danger" uib-tooltip="Delete row" ng-click="newModuleCtrl.newModule.options.splice($index,1)" style="padding-top: 3px;padding-bottom: 3px; padding-left:5px; padding-right:5px;"><span class="fa fa-minus"></span></label>
                       </div>
                     </div>
                   </div>
@@ -135,8 +135,8 @@
       </div>
 
 
-      <button class="btn btn-primary" ng-disabled="!newModule.module" ng-click="saveNewModule()"> Save <span ng-if="!saving" class="fa fa-save"></span> <span ng-if="saving" class="fa fa-spin fa-spinner"></span> </button>
-      <button class="btn btn-default" confirm="Are you sure you want to discard the changes?" ng-click="cancelNewModule()"> Cancel <span class="fa fa-times"></span> </button>
+      <button class="btn btn-primary" ng-disabled="!newModuleCtrl.newModule.module" ng-click="newModuleCtrl.saveNewModule()"> Save <span ng-if="!newModuleCtrl.saving" class="fa fa-save"></span> <span ng-if="saving" class="fa fa-spin fa-spinner"></span> </button>
+      <button class="btn btn-default" confirm="Are you sure you want to discard the changes?" ng-click="newModuleCtrl.cancelNewModule()"> Cancel <span class="fa fa-times"></span> </button>
 
     </div>
 
