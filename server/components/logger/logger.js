@@ -4,6 +4,14 @@
 
 var winston = require('winston');
 
-winston.add(winston.transports.File, {filename: './logs/server.log', json: false, colorize: true});
+import config from '../../config/environment';
+
+winston.add(winston.transports.File, {
+    filename: config.paths.local_server_logfile,
+    json: false,
+    colorize: true,
+    maxsize: '10485760',
+    maxFiles: '10'
+});
 
 module.exports = winston;

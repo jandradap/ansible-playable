@@ -20,6 +20,8 @@ import session from 'express-session';
 import connectMongo from 'connect-mongo';
 import mongoose from 'mongoose';
 var MongoStore = connectMongo(session);
+var winston = require('winston'),
+  expressWinston = require('express-winston');
 
 export default function(app) {
   var env = app.get('env');
@@ -46,6 +48,22 @@ export default function(app) {
   app.use(cookieParser());
   app.use(passport.initialize());
 
+  app.use(expressWinston.logger({
+    transports: [
+      new winston.transports.File({
+        json: false,
+        colorize: true,
+        filename: config.paths.local_express_server_logfile,
+        maxsize: '10485760',
+        maxFiles: '10'
+      })
+    ],
+    meta: true, // optional: control whether you want to log the meta data about the request (default to true)
+    msg: "HTTP {{req.method}} {{req.url}}", // optional: customize the default logging message. E.g. "{{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}"
+    expressFormat: true, // Use the default Express/morgan request formatting. Enabling this will override any msg if true. Will only output colors with colorize set to true
+    colorize: true, // Color the text and status code, using the Express/morgan color palette (text: gray, status: default green, 3XX cyan, 4XX yellow, 5XX red).
+    ignoreRoute: function (req, res) { return false; } // optional: allows to skip some log messages based on request and/or response
+  }));
 
   // Persist sessions with MongoStore / sequelizeStore
   // We need to enable sessions for passport-twitter because it's an

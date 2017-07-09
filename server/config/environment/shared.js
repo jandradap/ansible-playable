@@ -12,6 +12,8 @@ exports = module.exports = {
   },
 
   paths: {
+    local_server_logfile: './logs/server.log',
+    local_express_server_logfile: './logs/server-api.log',
     ansible_projects: '/opt/ansible-projects',
     ansible_projects_arhive: '/archive', // relative to projects folder
     ansible_custom_api_local: './helpers/AnsibleAPI.py',
