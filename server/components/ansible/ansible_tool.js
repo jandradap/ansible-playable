@@ -6,7 +6,7 @@ const Q = require("q");
 
 const all_commands = require('../../config/commands');
 
-const logger = require('../../components/logger/winston');
+const logger = require('../logger/logger');
 
 var local_logPath = 'logs/ansible/execute/';
 
