@@ -75,6 +75,10 @@ RUN mkdir -p /data/db
 
 ENV DOMAIN='http://ansible-playable.com'
 
+RUN gulp build
+
+
+# Start services and start web server
 ENTRYPOINT service ssh start && mongod & gulp serve:dist
 
 
