@@ -10,6 +10,7 @@ mongoose.Promise = require('bluebird');
 import config from './config/environment';
 import http from 'http';
 import seedDatabaseIfNeeded from './config/seed';
+const logger = require('./components/logger/logger');
 
 // Connect to MongoDB
 mongoose.connect(config.mongo.uri, config.mongo.options);
@@ -27,7 +28,10 @@ require('./routes').default(app);
 // Start server
 function startServer() {
   app.angularFullstack = server.listen(config.port, config.ip, function() {
-    console.log('Express server listening on %d, in %s mode', config.port, app.get('env'));
+    logger.info('\n');
+    logger.info('---------------------------------------------------------------');
+    logger.info('Express server listening on %d, in %s mode', config.port, app.get('env'));
+    logger.info('---------------------------------------------------------------\n');
   });
 }
 

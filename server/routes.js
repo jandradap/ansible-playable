@@ -10,6 +10,7 @@ import * as auth from './auth/auth.service';
 
 export default function(app) {
   // Insert routes below
+  app.use('/api/system', require('./api/system'));
   app.use('/api/custom_modules', auth.isAuthenticated(), require('./api/custom_module'));
   app.use('/api/ansible', auth.isAuthenticated(), require('./api/ansible'));
   app.use('/api/projects', auth.isAuthenticated(), require('./api/project'));

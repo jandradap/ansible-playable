@@ -1,12 +1,36 @@
 <div class="container">
-  <p>The delete user and user index api routes are restricted to users with the 'admin' role.</p>
-  <ul class="list-group user-list">
-    <li class="list-group-item" ng-repeat="user in admin.users">
-	    <div class="user-info">
-	        <strong>{{user.name}}</strong><br>
-	        <span class="text-muted">{{user.email}}</span>
-	    </div>
-        <a ng-click="admin.delete(user)" class="trash"><span class="fa fa-trash fa-2x"></span></a>
-    </li>
-  </ul>
+
+  <uib-tabset active="active">
+    <uib-tab index="0" heading="Users">
+      <p>The delete user and user index api routes are restricted to users with the 'admin' role.</p>
+      <ul class="list-group user-list">
+        <li class="list-group-item" ng-repeat="user in admin.users">
+          <div class="user-info">
+            <strong>{{user.name}}</strong><br>
+            <span class="text-muted">{{user.email}}</span> | <span class="text-muted">{{user.role}}</span>
+          </div>
+          <a ng-click="admin.delete(user)" class="trash"><span class="fa fa-trash fa-2x"></span></a>
+        </li>
+      </ul>
+    </uib-tab>
+    <uib-tab index="1" heading="Logs">
+
+      <uib-tabset active="active" >
+        <uib-tab index="0" heading="Server" select="admin.fetchServerLogs()">
+          <div style="background:black;color:lightgrey;width:100%;padding:20px;">
+            <p class="logconsole" ng-bind-html="admin.logsServer"></p>
+          </div>
+        </uib-tab>
+        <uib-tab index="1" heading="API" select="admin.fetchAPILogs()">
+          <div style="background:black;color:lightgrey;width:100%;padding:20px;">
+            <p class="logconsole" ng-bind-html="admin.logsAPI"></p>
+          </div>
+        </uib-tab>
+      </uib-tabset>
+
+
+    </uib-tab>
+
+  </uib-tabset>
+
 </div>

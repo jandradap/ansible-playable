@@ -15,6 +15,8 @@ import CustomModule from './custom_module.model';
 var ssh2_exec = require('../../components/ssh/ssh2_exec');
 var scp2_exec = require('../../components/scp/scp_exec');
 
+const logger = require('../../components/logger/logger');
+
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
   return function(entity) {
@@ -88,19 +90,17 @@ export function index(req, res) {
     ansibleEngine
   );
 
-  /*return CustomModule.find().exec()
-   .then(respondWithResult(res))
-   .catch(handleError(res));*/
 }
 
 // Gets a single CustomModule or a module_template from DB
 export function show(req, res) {
-  console.log("Show " + req.params.custom_module);
   var ansibleEngine = req.body.ansibleEngine;
 
   if(!ansibleEngine.customModules){
     return res.status(500).send("Custom Modules Folder not defined in Ansible Engine")
   }
+
+  logger.info('Show custom module ');
 
   var command = 'cat "' + ansibleEngine.customModules + '"/' + req.params.custom_module;
 

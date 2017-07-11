@@ -54,6 +54,7 @@ import Projects from './services/projects/projects.service';
 import ansible from './services/ansible/ansible.service';
 import YAML from './providers/yaml/yaml.service';
 import yamlFile from './services/yamlFile/yamlFile.service';
+import system from './services/system/system.service';
 
 import customModules from './custom_modules/custom_modules.service';
 
@@ -101,7 +102,7 @@ angular.module('app2App', [ngCookies, ngResource, ngSanitize, uiRouter, uiBootst
   // Components
   DesignerComponent, ProjectComponent, InventoryComponent, PlaybookComponent, FileBrowserComponent, RolesComponent, RunsComponent, CustomModulesComponent,
   // Services
-  YAML, yamlFile, Projects, ansible, ansi2html, editor, customModules,
+  YAML, yamlFile, Projects, ansible, ansi2html, editor, customModules, system,
   // Controllers
   NewInventoryController, NewGroupController, NewHostController, ComplexVarController, NewPlaybookController, ExecutionController, NewPlayController, NewTaskController, ComplexVarModalController,
   NewFileController, NewRoleController, SearchRoleController, NewModuleController,

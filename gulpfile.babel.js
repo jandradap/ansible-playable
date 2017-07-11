@@ -395,8 +395,9 @@ gulp.task('mocha:integration', () => {
         .pipe(mocha());
 });
 
+// Run as gulp env:all env:test mocha:integration:one
 gulp.task('mocha:integration:one', () => {
-  return gulp.src([`${serverPath}/**/custom_module.integration.js`, 'mocha.global.js'])
+  return gulp.src([`${serverPath}/**/system.integration.js`, 'mocha.global.js'])
     .pipe(mocha());
 });
 

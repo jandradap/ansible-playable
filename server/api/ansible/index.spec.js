@@ -27,14 +27,6 @@ var routerStub = {
   patch: sinon.spy(),
   post: sinon.spy(),
   delete: sinon.spy(),
-  modules: sinon.spy(),
-  command: sinon.spy(),
-  execute: sinon.spy(),
-  project_files: sinon.spy(),
-  playbook_get: sinon.spy(),
-  playbook_create: sinon.spy(),
-  playbook_delete: sinon.spy(),
-  playbook_list: sinon.spy()
 };
 
 // require the index with our stubbed out modules
