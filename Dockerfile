@@ -77,6 +77,8 @@ ENV DOMAIN='http://ansible-playable.com'
 
 RUN gulp build
 
+# Create empty logs directory
+RUN mkdir -p logs
 
 # Start services and start web server
 ENTRYPOINT service ssh start && mongod & gulp serve:dist
