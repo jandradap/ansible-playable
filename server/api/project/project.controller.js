@@ -14,7 +14,9 @@ import jsonpatch from 'fast-json-patch';
 import Project from './project.model';
 import config from '../../config/environment';
 const util = require('util');
-var ansibleTool = require('../../components/ansible/ansible_tool');
+const ansibleTool = require('../../components/ansible/ansible_tool');
+
+const logger = require('../../components/logger/logger');
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -51,7 +53,6 @@ function removeEntity(res) {
 }
 
 function handleEntityNotFound(res) {
-  console.log("Entity Not Found");
   return function(entity) {
     if(!entity) {
       res.status(404).end();
@@ -64,23 +65,20 @@ function handleEntityNotFound(res) {
 function handleError(res, statusCode) {
   statusCode = statusCode || 500;
   return function(err) {
-    console.log("ERror " + err);
+    logger.error("Error = " + err);
     res.status(statusCode).send(err);
   };
 }
 
 // Gets a list of Projects
 export function index(req, res) {
-  console.log("Getting projects list");
-
   let filter ={owner_id: req.user._id};
 
   if(config.userRoles.indexOf(req.user.role) >= config.userRoles.indexOf('admin')){
-    console.log("User is admin");
     filter = {}
   }
 
-  console.log("Filter =" + JSON.stringify(filter));
+  logger.info("Get projects filter = %s", JSON.stringify(filter) );
 
   return Project.find(filter).exec()
     .then(respondWithResult(res))
