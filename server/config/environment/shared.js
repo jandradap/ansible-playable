@@ -25,5 +25,8 @@ exports = module.exports = {
     ansible_project_library: '/library', // relative to project folder
     ansible_project_roles: '/roles', // relative to project folder
 
-  }
+  },
+
+  disablePlayboookExecution: process.env.DISABLE_PLAYBOOK_EXECUTION || false
+
 };

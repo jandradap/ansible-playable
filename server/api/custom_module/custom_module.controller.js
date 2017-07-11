@@ -12,8 +12,9 @@
 
 import jsonpatch from 'fast-json-patch';
 import CustomModule from './custom_module.model';
-var ssh2_exec = require('../../components/ssh/ssh2_exec');
-var scp2_exec = require('../../components/scp/scp_exec');
+import config from '../../config/environment';
+const ssh2_exec = require('../../components/ssh/ssh2_exec');
+const scp2_exec = require('../../components/scp/scp_exec');
 
 const logger = require('../../components/logger/logger');
 
@@ -133,6 +134,10 @@ export function testModule(req, res) {
   var ansibleEngine = req.body.ansibleEngine;
 
   var moduleArgs = req.body.moduleArgs;
+
+  if(config.disablePlayboookExecution){
+    return res.status(500).send('Testing has been disabled. Set environment variable DISABLE_PLAYBOOK_EXECUTION to "false" and restart web server')
+  }
 
   if(!ansibleEngine.customModules){
     res.status(500).send("Custom Modules Folder not defined in Ansible Engine")

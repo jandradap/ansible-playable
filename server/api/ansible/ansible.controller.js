@@ -12,6 +12,7 @@
 
 import jsonpatch from 'fast-json-patch';
 import Ansible from './ansible.model';
+import config from '../../config/environment';
 var ssh2_exec = require('../../components/ssh/ssh2_exec');
 var ansibleTool = require('../../components/ansible/ansible_tool');
 
@@ -112,7 +113,6 @@ export function modules(req, res) {
 
 // Gets a single Deploy from the DB
 export function getLogs(req, res) {
-  console.log("Param ID " + req.params.id);
   return Ansible.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
     .then(function(entity){
@@ -130,11 +130,17 @@ export function getLogs(req, res) {
     .catch(handleError(res));
 }
 
+console.log("config.disablePlayboookExecution  =" + config.disablePlayboookExecution);
+
 // Executes Ansible Play book in the backend
 export function execute(req, res) {
 
   //var inventory_file_contents = req.body.inventory_file_contents;
   //var playbook_file_contents = req.body.playbook_file_contents;
+
+  if(config.disablePlayboookExecution){
+    return res.status(500).send('Playbook execution has been disabled. Set environment variable DISABLE_PLAYBOOK_EXECUTION to "false" and restart web server')
+  }
 
   var playbook_name =  req.body.selectedPlaybook;
   var inventory_file_name = req.body.inventory_file_name;

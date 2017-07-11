@@ -16,5 +16,13 @@ module.exports = {
   GOOGLE_SECRET: 'secret',
 
   // Control debug level for modules using visionmedia/debug
-  DEBUG: ''
+  DEBUG: '',
+
+  SCRIPT_ENGINE_HOST : 'localhost',
+  SCRIPT_ENGINE_USER : 'root',
+  SCRIPT_ENGINE_PASSWORD : 'P@ssw0rd@123',
+
+  MONGODB_URI_DEV: 'mongodb://localhost/dev',
+
+  DISABLE_PLAYBOOK_EXECUTION: true
 };

@@ -1,6 +1,6 @@
-var ssh2_exec = require('../ssh/ssh2_exec');
-var scp2_exec = require('../scp/scp_exec');
-var config =  require('../../config/environment');
+const ssh2_exec = require('../ssh/ssh2_exec');
+const scp2_exec = require('../scp/scp_exec');
+const config =  require('../../config/environment');
 const util = require('util');
 const Q = require("q");
 
@@ -8,7 +8,7 @@ const all_commands = require('../../config/commands');
 
 const logger = require('../logger/logger');
 
-var local_logPath = 'logs/ansible/execute/';
+const local_logPath = 'logs/ansible/execute/';
 
 /**
  * Get Logs
@@ -373,7 +373,7 @@ exports.deletePlaybook = function(project_folder,playbook_file_name, dataCallbac
 exports.getPlaybookList = function(project_folder, successCallback, errorCallback, ansibleEngine){
 
   var playbook_file_path = project_folder + '/';
-  var command = util.format(all_commands.general.get_playbook_list, playbook_file_path);
+  var command = util.format(all_commands.ansible.get_playbook_list, playbook_file_path);
   var ansiblePlaybookListResults = "";
 
   ssh2_exec.executeCommand(command,
