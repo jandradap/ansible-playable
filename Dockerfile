@@ -92,3 +92,5 @@ RUN apt-get update -q && apt-get install -y python-pip fuse \
 RUN pip install yas3fs
 RUN sed -i'' 's/^# *user_allow_other/user_allow_other/' /etc/fuse.conf # uncomment user_allow_other
 RUN chmod a+r /etc/fuse.conf # make it readable by anybody, it is not the default on Ubuntu
+
+RUN mkdir -p /opt/ansible-projects

@@ -17,7 +17,7 @@ if [[ ${MOUNT_S3} = "True" ]];
     echo -e "${COLOR_GREEN}-----------------------------------------------------"
     echo "       Mounting Amazon S3 Bucket to /opt/ansible-projects"
     echo -e "-----------------------------------------------------${NC}"
-    yas3fs s3://${S3_PATH} /opt/ansible-projects -f
+    yas3fs s3://${S3_PATH} /opt/ansible-projects -f &
 fi
 
 echo -e "${COLOR_GREEN}-----------------------------------------------------"
