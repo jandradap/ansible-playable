@@ -45,6 +45,13 @@ RUN /usr/bin/ssh-keygen -A
 # Start Open-ssh server
 RUN service ssh start
 
+# Install YAS3FS for mounting AWS Bucket
+RUN apt-get update -q && apt-get install -y python-pip fuse \
+	&& apt-get clean -y && rm -rf /var/lib/apt/lists/*
+RUN pip install yas3fs
+RUN sed -i'' 's/^# *user_allow_other/user_allow_other/' /etc/fuse.conf # uncomment user_allow_other
+RUN chmod a+r /etc/fuse.conf # make it readable by anybody, it is not the default on Ubuntu
+
 # Install NPM dependencies
 RUN npm install -g yo gulp-cli generator-angular-fullstack
 
@@ -73,8 +80,6 @@ RUN chown -R app_user /data/web-app
 
 RUN mkdir -p /data/db
 
-ENV DOMAIN='http://ansible-playable.com'
-
 RUN gulp build
 
 # Create empty logs directory
@@ -83,14 +88,7 @@ RUN mkdir -p logs
 # Provide execute permissions for startup script
 RUN chmod 755 helpers/startup.sh
 
+RUN mkdir -p /opt/ansible-projects
+
 # Start services and start web server
 ENTRYPOINT helpers/startup.sh
-
-# Install YAS3FS for mounting AWS Bucket
-RUN apt-get update -q && apt-get install -y python-pip fuse \
-	&& apt-get clean -y && rm -rf /var/lib/apt/lists/*
-RUN pip install yas3fs
-RUN sed -i'' 's/^# *user_allow_other/user_allow_other/' /etc/fuse.conf # uncomment user_allow_other
-RUN chmod a+r /etc/fuse.conf # make it readable by anybody, it is not the default on Ubuntu
-
-RUN mkdir -p /opt/ansible-projects
