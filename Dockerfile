@@ -81,6 +81,6 @@ RUN gulp build
 RUN mkdir -p logs
 
 # Start services and start web server
-ENTRYPOINT service ssh start && mongod & gulp serve:dist
+ENTRYPOINT service ssh start && mongod & gulp serve:dist:no_build
 
 

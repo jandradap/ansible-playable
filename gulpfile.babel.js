@@ -370,6 +370,14 @@ gulp.task('serve:dist', cb => {
         cb);
 });
 
+gulp.task('serve:dist:no_build', cb => {
+  runSequence(
+    'env:all',
+    'env:prod',
+    ['start:server:prod'],
+    cb);
+});
+
 gulp.task('test', cb => {
     //return runSequence('test:server', 'test:client', cb);
     //TODO: Integrate client side tests
