@@ -20,11 +20,17 @@ if [[ ${MOUNT_S3} = "True" ]];
     yas3fs s3://${S3_PATH} /opt/ansible-projects -f &
 fi
 
-echo -e "${COLOR_GREEN}-----------------------------------------------------"
-echo -e "              Start MONGODB Service"
-echo -e "-----------------------------------------------------${NC}"
 # Start MongoDB database in the background
-mongod &
+if [[ ${MONGODB_URI} == *"localhost"* || ${MONGODB_URI} == "" ]]
+  then
+    echo -e "${COLOR_GREEN}-----------------------------------------------------"
+    echo -e "              Start MONGODB Service"
+    echo -e "-----------------------------------------------------${NC}"
+
+    mongod &
+  else
+    echo -e "  --------------  Not Starting MONGODB Service -----------"
+fi
 
 echo -e "${COLOR_GREEN}-----------------------------------------------------"
 echo -e "              Start Web Server"
