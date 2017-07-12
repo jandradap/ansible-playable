@@ -12,7 +12,7 @@ export class NavbarComponent {
     'state': 'project'
   },{
     'title': 'Designer',
-    'state': 'designer'
+    'state': 'designer.inventory'
   },{
     'title': 'Runs',
     'state': 'runs'
