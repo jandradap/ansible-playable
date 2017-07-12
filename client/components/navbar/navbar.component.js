@@ -4,10 +4,10 @@
 import angular from 'angular';
 
 export class NavbarComponent {
-  menu = [{
+  menu = [/*{
     'title': 'Home',
     'state': 'main'
-  },{
+  }*/,{
     'title': 'Projects',
     'state': 'project'
   },{
