@@ -92,6 +92,7 @@ import json2yaml from './filters/json2yaml/json2yaml.filter';
 
 import complexVar from './directives/complexVar/complexVar.directive';
 import tasks from './designer/tasks/tasks.directive';
+import logo from './logo/logo.directive';
 
 import editor from './services/editor/editor.service';
 
@@ -109,7 +110,7 @@ angular.module('app2App', [ngCookies, ngResource, ngSanitize, uiRouter, uiBootst
   // Filters
   dictToKeyValueArray, dictToKeyValueArraySimple, keyValueArrayToDict, keyValueArrayToArray, addDotInKey, removeDotInKey, json2yaml,
   // Directives
-  complexVar, tasks, treecontrol, 'btford.markdown', 'ngTagsInput', 'angular-loading-bar'
+  complexVar, tasks, treecontrol, 'btford.markdown', 'ngTagsInput', 'angular-loading-bar', logo
 
 ])
   .config(routeConfig)

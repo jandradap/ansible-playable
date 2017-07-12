@@ -57,6 +57,7 @@
 @import 'designer/roles/roles.css';
 @import 'designer/tasks/tasks.css';
 @import 'directives/complexVar/complexVar.css';
+@import 'logo/logo.css';
 @import 'main/main.css';
 @import 'project/project.css';
 @import 'runs/runs.css';
