@@ -1,6 +1,9 @@
 # Pull base image.
 FROM node:6.2.2
 
+LABEL maintainer="Mumshad Mannambeth" maintainer_email="mmumshad@gmail.com"
+LABEL Description="This image is used to start the ansible-playable web server. The image contains a built-in mongodb database, can mount Amazon S3 instance and runs the playable web server on MEAN stack." Version="alpha"
+
 # Reset Root Password
 RUN echo "root:P@ssw0rd@123" | chpasswd
 
@@ -88,6 +91,7 @@ RUN mkdir -p logs
 # Provide execute permissions for startup script
 RUN chmod 755 helpers/startup.sh
 
+# Create ansible-projects folder if it doesn't already exist
 RUN mkdir -p /opt/ansible-projects
 
 # Start services and start web server
