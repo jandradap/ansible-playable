@@ -80,7 +80,10 @@ RUN gulp build
 # Create empty logs directory
 RUN mkdir -p logs
 
+# Provide execute permissions for startup script
+RUN chmod 755 helpers/startup.sh
+
 # Start services and start web server
-ENTRYPOINT service ssh start && mongod & gulp serve:dist:no_build
+ENTRYPOINT helpers/startup.sh
 
 
