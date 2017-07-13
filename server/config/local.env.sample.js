@@ -27,7 +27,9 @@ module.exports = {
   DISABLE_PLAYBOOK_EXECUTION: true,
   DISABLE_ANSIBLE_HOST_ADDITION: true,
 
+  EMAIL_USER_TEST: 'test@playable.com',
   PASSWORD_TEST: 'test',
+  EMAIL_USER_ADMIN: 'admin@playable.com',
   PASSWORD_ADMIN: 'admin',
 
   SEED_DB: false

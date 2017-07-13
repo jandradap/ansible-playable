@@ -6,25 +6,47 @@
 'use strict';
 import User from '../api/user/user.model';
 import config from './environment/';
+import logger from '../components/logger/logger';
 
 export default function seedDatabaseIfNeeded() {
-  if(config.seedDB) {
+  logger.info('seedDB = %s', config.seedDB);
+  if(config.seedDB == "true") {
+    logger.info('Removing and re-creating local users');
     User.find({}).remove()
       .then(() => {
         User.create({
           provider: 'local',
           name: 'Test User',
-          email: 'test@playable.com',
+          email: process.env.EMAIL_USER_TEST || 'test@example.com',
           password: process.env.PASSWORD_TEST || 'test'
         }, {
           provider: 'local',
           role: 'admin',
           name: 'Admin',
-          email: 'admin@playable.com',
+          email: process.env.EMAIL_USER_ADMIN || 'admin@example.com',
           password: process.env.PASSWORD_ADMIN || 'admin'
         })
-        .then(() => console.log('finished populating users'))
-        .catch(err => console.log('error populating users', err));
+        .then(() => logger.info('finished populating users'))
+        .catch(err => logger.error('error populating users - %s', err));
       });
+  }else{
+    logger.info('Finding local admin user');
+    User.find({name: 'Admin'}).then((user) => {
+      if(!user){
+        logger.info('Admin user not found, creating local admin user');
+        User.create({
+          provider: 'local',
+          role: 'admin',
+          name: 'Admin',
+          email: process.env.EMAIL_USER_ADMIN || 'admin@example.com',
+          password: process.env.PASSWORD_ADMIN || 'admin'
+        })
+          .then(() => logger.info('finished populating users'))
+          .catch(err => logger.error('error populating users - %s', err));
+      }else{
+        logger.info('Admin user already exists.');
+      }
+    });
+
   }
 }

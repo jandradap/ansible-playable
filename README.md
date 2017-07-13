@@ -25,13 +25,24 @@ Try a publicly hosted live demo at [ansible-playable.com](http://www.ansible-pla
 The easiest way to get started is to use Docker. The latest version of the software is built using docker and is available at [Docker hub](https://hub.docker.com/r/mmumshad/ansible-playable/)
  
  Run the image to get started
-```angular2html
+```
   docker run -p 80:8080 mmumshad/ansible-playable
 ```
 
 Remember to use port mapping to map http port to external host. 
 
 Once the docker container is running visit http://<docker host\> to access the web portal. 
+
+The above command should only be used for testing purpose as the changes you make are not saved. The projects you create are not retained after restarting docker container. 
+
+To persist data across docker container restarts use the below command to map volumes from docker container on the docker host.
+```
+  docker run -p 80:8080 -v /data:/data -v /opt/ansible-projects:/opt/ansible-projects mmumshad/ansible-playable
+```
+
+This command creates two volume maps - /data and /opt/ansible-projects. These directories must pre-exist on the docker host. All changes made by the docker container will now be stored in these folders.
+
+Checkout Advanced Topics below for more details
 
 ## Features
 The tool currently supports the following features and functionality:
@@ -67,6 +78,50 @@ The tool currently supports the following features and functionality:
   - View list of users
   - Delete Users
   - View System and Server logs from the Admin tab
+
+### Advanced options
+
+Some advanced options on customizing execution are given below
+
+#### External database
+By default the web application uses a local mongodb instance. To use an external instance of MongoDB provide a different environmental variable using the -e parameter in docker command
+ 
+ ```
+   docker run -p 80:8080 -e MONGODB_URI=mongodb://dbuser:password@test.mlab.com/ansible-playable mmumshad/ansible-playable
+ ```
+
+#### S3 storage for projects data
+By default all ansible projects and files are stored at location /opt/ansible-projects. You may map volume using docker run parameter -v to map a local volume on host to this directory.
+In case you need this to be on an external S3 store, set the below environment variables:
+
+    - AWS_ACCESS_KEY_ID=KEY
+    - AWS_SECRET_ACCESS_KEY=SECRET_KEY
+    - MOUNT_S3=True
+    - S3_PATH=ansible-playable-storage/data
+    
+Example Command:
+```
+   docker run -p 80:8080 -e AWS_ACCESS_KEY_ID=KEY -e - AWS_SECRET_ACCESS_KEY=SECRET_KEY -e MOUNT_S3=True -e S3_PATH=ansible-playable-storage/data mmumshad/ansible-playable
+```
+
+#### Authentication
+
+To configure Google Authentication provide the below keys:
+
+    - DOMAIN=http://ansible-playable.com
+    - GOOGLE_ID=ID
+    - GOOGLE_SECRET=SECRET
+
+> Note: you must first configure google authentication and gather the GOOGLE_ID and GOOGLE_SECRET for this.
+
+#### Admin user account
+By default the local admin account is created and the email used is "admin@example.com" and the password is "admin". Provide the below environment variables to use a different password or to recreate admin and test account
+
+    - SEED_DB=true
+    - EMAIL_USER_ADMIN=admin@playable.com
+    - PASSWORD_ADMIN=ADMIN_PASSWORD
+    - EMAIL_USER_TEST=test@playable.com
+    - PASSWORD_TEST=TEST_ACCOUNT_PASSWORD
 
 ### Prerequisites
 
