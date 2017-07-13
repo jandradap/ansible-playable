@@ -5,10 +5,32 @@ import routing from './main.routes';
 export class MainController {
 
   /*@ngInject*/
-  constructor($http, $scope, appConfig) {
+  constructor($http, $scope, $uibModal, appConfig) {
     'ngInject';
     this.$http = $http;
     $scope.appVersion = appConfig.version;
+
+    this.videos = appConfig.videos;
+
+    this.showVideoModal = function (video) {
+      var modalInstance = $uibModal.open({
+        animation: true,
+        template: require('../modals/video/video.html'),
+        controller: 'VideoController',
+        size: 'md',
+        backdrop: 'static',
+        keyboard: false,
+        closeByEscape: false,
+        closeByDocument: false,
+        resolve: {
+          video: function () {
+            return video
+          }
+        }
+      });
+
+    };
+
   }
 }
 

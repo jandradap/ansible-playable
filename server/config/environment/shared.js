@@ -27,6 +27,30 @@ exports = module.exports = {
 
   },
 
-  disablePlayboookExecution: process.env.DISABLE_PLAYBOOK_EXECUTION || false
+  disablePlayboookExecution: process.env.DISABLE_PLAYBOOK_EXECUTION || false,
+
+  videos: [
+    {
+      title: 'Overview',
+      type: 'overview',
+      video_id: '6sE0Gqcw_4U'
+    },
+    {
+      title: 'Getting Started',
+      type: 'getting_started'
+    },
+    {
+      title: 'Google Cloud Example',
+      type: 'google_cloud'
+    },
+    {
+      title: 'VMWare Example',
+      type: 'vmware'
+    },
+    {
+      title: 'Custom Modules',
+      type: 'custom_module'
+    }
+  ]
 
 };
