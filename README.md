@@ -31,7 +31,7 @@ The easiest way to get started is to use Docker. The latest version of the softw
 
 Remember to use port mapping to map http port to external host. 
 
-Once the docker container is running visit http://\<docker host\> to access the web portal. 
+Once the docker container is running visit http://<docker host\> to access the web portal. 
 
 ## Features
 The tool currently supports the following features and functionality:
