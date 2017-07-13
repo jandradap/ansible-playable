@@ -63,6 +63,10 @@ The tool currently supports the following features and functionality:
   - Auto update documentation and parameter section based on user input
   - Provides default properties and available types in UI
   - Test developed custom module
+- Admin
+  - View list of users
+  - Delete Users
+  - View System and Server logs from the Admin tab
 
 ### Prerequisites
 

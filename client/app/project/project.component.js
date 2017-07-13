@@ -7,11 +7,14 @@ import routes from './project.routes';
 
 export class ProjectComponent {
   /*@ngInject*/
-  constructor($scope, Projects, Auth, appConfig) {
+  constructor($scope, Projects, Auth, appConfig, system) {
     'ngInject';
-    var default_project_folder = '/opt/ehc-ansible-projects/';
-
     var projectCtrl = this;
+
+    system.getConfigDisableAnsibleHostAddition((response) => {
+      projectCtrl.disableAnsibleHostAddition = response.data;
+      console.log(projectCtrl.disableAnsibleHostAddition)
+    });
 
     // Define a blank project object
     projectCtrl.blankProject = {

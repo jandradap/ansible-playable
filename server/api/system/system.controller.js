@@ -88,3 +88,9 @@ exports.apiLogs = function(req,res){
   })
 
 };
+
+exports.getConfigDisableAnsibleHostAddition = function(req,res){
+
+  res.send(config.disableAnsibleHostAddition);
+
+};

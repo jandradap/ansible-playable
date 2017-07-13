@@ -24,5 +24,11 @@ module.exports = {
 
   MONGODB_URI_DEV: 'mongodb://localhost/dev',
 
-  DISABLE_PLAYBOOK_EXECUTION: true
+  DISABLE_PLAYBOOK_EXECUTION: true,
+  DISABLE_ANSIBLE_HOST_ADDITION: true,
+
+  PASSWORD_TEST: 'test',
+  PASSWORD_ADMIN: 'admin',
+
+  SEED_DB: false
 };

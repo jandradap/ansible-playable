@@ -4,11 +4,11 @@ exports = module.exports = {
   version: 'Alpha',
   // List of user roles
   userRoles: ['guest', 'user', 'admin'],
-  'scriptEngine' : {
-    'host' : process.env.SCRIPT_ENGINE_HOST || 'localhost',
-    'user' : process.env.SCRIPT_ENGINE_USER || 'root',
+  'scriptEngine': {
+    'host': process.env.SCRIPT_ENGINE_HOST || 'localhost',
+    'user': process.env.SCRIPT_ENGINE_USER || 'root',
     // This is the default root password for local container set during docker container rebuild
-    'password' : process.env.SCRIPT_ENGINE_PASSWORD || 'P@ssw0rd@123'
+    'password': process.env.SCRIPT_ENGINE_PASSWORD || 'P@ssw0rd@123'
   },
 
   paths: {
@@ -28,29 +28,34 @@ exports = module.exports = {
   },
 
   disablePlayboookExecution: process.env.DISABLE_PLAYBOOK_EXECUTION || false,
+  // Disable adding a separate ansible host than localhost
+  disableAnsibleHostAddition: process.env.DISABLE_ANSIBLE_HOST_ADDITION || false,
 
-  videos: [
-    {
-      title: 'Overview',
-      type: 'overview',
-      video_id: '6sE0Gqcw_4U'
-    },
-    {
-      title: 'Getting Started',
-      type: 'getting_started'
-    },
-    {
-      title: 'Google Cloud Example',
-      type: 'google_cloud'
-    },
-    {
-      title: 'VMWare Example',
-      type: 'vmware'
-    },
-    {
-      title: 'Custom Modules',
-      type: 'custom_module'
-    }
-  ]
+  videos
+:
+[
+  {
+    title: 'Overview',
+    type: 'overview',
+    video_id: '6sE0Gqcw_4U'
+  },
+  {
+    title: 'Getting Started',
+    type: 'getting_started'
+  },
+  {
+    title: 'Google Cloud Example',
+    type: 'google_cloud'
+  },
+  {
+    title: 'VMWare Example',
+    type: 'vmware'
+  },
+  {
+    title: 'Custom Modules',
+    type: 'custom_module'
+  }
+]
 
-};
+}
+;

@@ -7,9 +7,14 @@ export function systemService($http) {
 
   const api_system = '/api/system';
   const api_get_logs = api_system + '/logs';
+  const get_config_disable_ansible_host_addition = api_system + '/config/disable_ansible_host_addition';
 
   this.getLogs = function(type, successCallback, errorCallback){
     $http.get(api_get_logs + '/' + type).then(successCallback, errorCallback);
+  };
+
+  this.getConfigDisableAnsibleHostAddition = function(successCallback, errorCallback){
+    $http.get(get_config_disable_ansible_host_addition).then(successCallback, errorCallback);
   }
 
 }

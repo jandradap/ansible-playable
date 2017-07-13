@@ -109,6 +109,10 @@ export function create(req, res) {
   req.body.owner_id = req.user._id;
   req.body.owner_name = req.user.name;
 
+  if(config.disableAnsibleHostAddition == "true" && ansibleEngine.ansibleHost && ansibleEngine.ansibleHost !== 'localhost'){
+    return res.status(500).send("Unable to add a custom Ansible Engine as ENV variable DISABLE_ANSIBLE_HOST_ADDITION is set to true")
+  }
+
   // Set default values
   if(!ansibleEngine.ansibleHost){
     ansibleEngine = {
