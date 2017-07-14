@@ -11,14 +11,14 @@ module.exports = {
     list_folder_contents: 'ls "%s"',
     check_dir_exists: '[ -d "%s" ]',
     check_dir_not_exists: '[ ! -d "%s" ]',
-    archive_folder: 'mkdir -p %s && tar -cvf %s/%s.tar %s && rm -rf %s',
+    archive_folder: 'mkdir -p %s && tar -cvf "%s/%s.tar" "%s" && rm -rf "%s"',
     list_roles_files_json: 'cd "%s/roles/%s"; python /tmp/dir_tree.py',
     list_files_json: 'cd "%s"; python /tmp/dir_tree.py'
   },
   ansible:{
     version : 'ansible --version',
     doc:      'ansible-doc -l',
-    playbook: 'ansible-playbook %s -i %s',
+    playbook: 'ansible-playbook "%s" -i %s',
     export_ansible_library: 'export ANSIBLE_LIBRARY="%s";',
     export_force_color: 'export ANSIBLE_FORCE_COLOR=%s;',
     export_host_key_check: 'export ANSIBLE_HOST_KEY_CHECKING=%s;',
