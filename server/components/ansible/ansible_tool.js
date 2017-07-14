@@ -104,7 +104,7 @@ exports.getAnsibleVersion = function(successCallback,errorCallback, ansibleEngin
  * @returns {string}
  */
 exports.getAnsibleCommand = function(project_folder, playbook_name, inventory_file_name, tags_joined, limit_to_hosts_joined, verbose,check_mode,dataCallback, successCallback,errorCallback,ansibleEngine){
-  var command = util.format(all_commands.ansible.export_force_color + all_commands.ansible.export_host_key_check + 'cd %s; ' +  all_commands.ansible.playbook , 'true', 'False', project_folder, playbook_name, inventory_file_name)
+  var command = util.format(all_commands.ansible.export_force_color + all_commands.ansible.export_host_key_check + 'cd "%s"; ' +  all_commands.ansible.playbook , 'true', 'False', project_folder, playbook_name, inventory_file_name)
 
   if(ansibleEngine.customModules){
     command = 'export ANSIBLE_LIBRARY="' + ansibleEngine.customModules + '"; ' + command;
