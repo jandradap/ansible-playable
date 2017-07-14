@@ -41,7 +41,8 @@ exports = module.exports = {
   },
   {
     title: 'Getting Started',
-    type: 'getting_started'
+    type: 'getting_started',
+    video_id: 'ze5BWEQ1RJw'
   },
   {
     title: 'Google Cloud Example',
