@@ -10,6 +10,8 @@ import logger from '../components/logger/logger';
 
 export default function seedDatabaseIfNeeded() {
   logger.info('seedDB = %s', config.seedDB);
+  // If asked to seed DB - create Admin and Test user
+  // Else create admin user at the minimum
   if(config.seedDB == "true") {
     logger.info('Removing and re-creating local users');
     User.find({}).remove()
@@ -32,7 +34,7 @@ export default function seedDatabaseIfNeeded() {
   }else{
     logger.info('Finding local admin user');
     User.find({name: 'Admin'}).then((user) => {
-      if(!user){
+      if(!user.length){
         logger.info('Admin user not found, creating local admin user');
         User.create({
           provider: 'local',
@@ -44,6 +46,7 @@ export default function seedDatabaseIfNeeded() {
           .then(() => logger.info('finished populating users'))
           .catch(err => logger.error('error populating users - %s', err));
       }else{
+        console.log("Admin user =" + JSON.stringify(user));
         logger.info('Admin user already exists.');
       }
     });
