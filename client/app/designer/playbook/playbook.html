@@ -18,7 +18,7 @@
               ng-click="cancelPlaybookChanges()">Cancel <span class="fa fa-times-circle"></span></button>
       <button class="btn btn-danger" confirm="Are you sure you want to delete playbook? "
               ng-disabled="!selectedPlaybook.playbook" ng-click="deletePlaybook()">Delete <span
-        ng-show="!deletePlaybookLoading" class="fa fa-save"></span><span ng-show="deletePlaybookLoading"
+        ng-show="!deletePlaybookLoading" class="fa fa-trash"></span><span ng-show="deletePlaybookLoading"
                                                                          class="fa fa-spinner fa-spin"></span></button>
       <button class="btn btn-success" ng-disabled="!selectedPlaybook.playbook"
               ng-click="executeAnsiblePlayBook(null,'Playbook')">Play <span class="fa fa-play"></span></button>
