@@ -46,8 +46,9 @@ exports = module.exports = {
   },
   {
     title: 'Google Cloud Example',
-    type: 'google_cloud'
-  },
+    type: 'google_cloud',
+    video_id: 'QQuA0EHIijo'
+  }/*,
   {
     title: 'VMWare Example',
     type: 'vmware'
@@ -55,7 +56,7 @@ exports = module.exports = {
   {
     title: 'Custom Modules',
     type: 'custom_module'
-  }
+  }*/
 ]
 
 }
