@@ -46,7 +46,6 @@ export default function seedDatabaseIfNeeded() {
           .then(() => logger.info('finished populating users'))
           .catch(err => logger.error('error populating users - %s', err));
       }else{
-        console.log("Admin user =" + JSON.stringify(user));
         logger.info('Admin user already exists.');
       }
     });
